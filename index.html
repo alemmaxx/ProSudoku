@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#140f2e">
+<!-- PWA / iPhone -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ProSudoku">
 <title>ProSudoku by ProKuiz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -212,7 +219,7 @@ input.inp:focus{border-color:var(--c2)}
       </div>
       <button class="btn" id="btnResume" style="display:none" onclick="resumeSaved()"><span class="ico">▶️</span><span data-t="resume">Sambung Permainan</span></button>
     </div>
-    <button class="backbar exit" onclick="askExit()">⏻ <span data-t="exitBtn">Keluar App</span></button>
+    <button class="backbar exit" id="exitBtn" onclick="askExit()">⏻ <span data-t="exitBtn">Keluar App</span></button>
     <div class="foot"><span class="netdot" id="netDot"></span><span id="netTxt">Offline</span> · v<span class="verTxt"></span></div>
   </section>
 
@@ -528,9 +535,14 @@ function needOnline(){
  if(fbErr==='SDK'||!db){toast(t('noSdk'));initFB();return false}
  if(!online){toast(t('noAuth')+(fbErr?' ('+fbErr+')':''));initFB();return false}
  if(!ME.name){askName();return false}return true}
-async function pullProfile(){try{const d=await db.collection('players').doc(ME.fid).get();if(d.exists){const x=d.data();
+let SEASON=1;
+async function pullProfile(){try{
+  // Musim ranking: admin tukar config/app.season di Firestore untuk reset semua ranking
+  try{const c=await db.collection('config').doc('app').get();SEASON=c.exists?(parseInt(c.data().season)||1):1}catch(e){SEASON=ME.season||1}
+  if((ME.season||1)!==SEASON){Object.assign(ME,{rating:1000,points:0,wins:0,losses:0,games:0,solved:0,best:{},season:SEASON});LS.set('me',ME);refreshHome();refreshSet();toast('🏆 '+(S.lang==='ms'?'Ranking musim baru bermula!':'New ranking season started!'))}
+  const d=await db.collection('players').doc(ME.fid).get();if(d.exists&&(parseInt(d.data().season)||1)===SEASON){const x=d.data();
   ['rating','wins','losses'].forEach(k=>{if(typeof x[k]==='number')ME[k]=x[k]});ME.points=Math.max(ME.points,x.points||0);ME.solved=Math.max(ME.solved,x.solved||0);LS.set('me',ME);refreshHome()}pushProfile()}catch(e){console.warn(e)}}
-function pushProfile(){if(!db||!ME.fid||!ME.name)return;db.collection('players').doc(ME.fid).set({name:ME.name,rating:ME.rating,points:ME.points,wins:ME.wins,losses:ME.losses,solved:ME.solved,games:ME.games,updated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>console.warn(e))}
+function pushProfile(){if(!db||!ME.fid||!ME.name)return;db.collection('players').doc(ME.fid).set({name:ME.name,rating:ME.rating,points:ME.points,wins:ME.wins,losses:ME.losses,solved:ME.solved,games:ME.games,season:SEASON,updated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>console.warn(e))}
 function openOnline(){if(!needOnline())return;openM('mOnline')}
 function myInfo(){return{uid:ME.fid,name:ME.name,rating:ME.rating}}
 function showWait(title,sub,code){$('wTitle').textContent=title;$('wSub').textContent=sub;$('wCode').style.display=code?'block':'none';$('wCode').textContent=code||'';$('wBot').style.display='none';openM('mWait')}
@@ -594,7 +606,7 @@ function rankTab(b){document.querySelectorAll('.tab').forEach(x=>x.classList.tog
 async function loadRank(){const L=$('rankList'),P=$('podium');P.innerHTML='';
  if(!CFG_OK){L.innerHTML=`<div class="empty">${t('noNet')}</div>`;return}if(!db){L.innerHTML=`<div class="empty">${t('noSdk')}</div>`;initFB();return}
  L.innerHTML='<div class="spinner" style="width:50px;height:50px"></div>';
- try{const q=await db.collection('players').orderBy(rankKey,'desc').limit(50).get();const rows=q.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.name);
+ try{const q=await db.collection('players').orderBy(rankKey,'desc').limit(50).get();const rows=q.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.name&&(parseInt(r.season)||1)===SEASON);
   if(!rows.length){L.innerHTML=`<div class="empty">${t('emptyRank').replace('\n','<br>')}</div>`;return}
   const sfxk=rankKey==='rating'?'⭐':rankKey==='points'?'pts':'W';
   const top=rows.slice(0,3);const ord=[top[1],top[0],top[2]];const cls=['p2','p1','p3'];const med=['2','1','3'];
@@ -605,6 +617,11 @@ async function loadRank(){const L=$('rankList'),P=$('podium');P.innerHTML='';
 
 
 /* ============ Back button (Android) ============ */
+const IS_NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+if(!IS_NATIVE)$('exitBtn').style.display='none';   // iPhone/web: app ditutup dengan swipe, tiada butang keluar
+/* PWA: service worker (iPhone/web + APK live update) */
+if('serviceWorker' in navigator&&location.protocol==='https:'&&location.hostname!=='localhost'){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>{r.update();
+ r.addEventListener('updatefound',()=>{const w=r.installing;w&&w.addEventListener('statechange',()=>{if(w.state==='activated'&&navigator.serviceWorker.controller)toast('🚀 '+(S.lang==='ms'?'Versi baru dipasang':'New version installed'))})})}).catch(()=>{})})}
 function exitApp(){try{const A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(A)return A.exitApp()}catch(e){}try{navigator.app&&navigator.app.exitApp()}catch(e){}window.close()}
 function askExit(){$('cIcon').textContent='👋';$('cTitle').textContent=t('exitApp');$('cSub').textContent=t('exitSub');$('cYes').onclick=()=>{closeM('mConfirm');if(G&&G.mode==='solo'&&!G.over)saveSolo();exitApp()};openM('mConfirm')}
 function handleBack(){
@@ -613,7 +630,7 @@ function handleBack(){
  const scr=document.querySelector('.screen.on').id;
  if(scr==='sGame'){leaveGame();return}
  if(scr!=='sHome'){show('sHome');return}
- askExit()}
+ if(IS_NATIVE)askExit()}
 (function(){let native=false;try{const A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(A&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){A.addListener('backButton',handleBack);native=true}}catch(e){}
  document.addEventListener('backbutton',e=>{e.preventDefault();handleBack()},false);
  if(!native){try{history.pushState({ps:1},'');addEventListener('popstate',()=>{history.pushState({ps:1},'');handleBack()})}catch(e){}}})();

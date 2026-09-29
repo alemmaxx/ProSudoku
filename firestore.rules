@@ -2,6 +2,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Tetapan app (musim ranking) — hanya admin tukar melalui Firebase Console
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Profil & ranking pemain — semua boleh baca, hanya pemilik boleh tulis
     match /players/{uid} {
       allow read: if true;

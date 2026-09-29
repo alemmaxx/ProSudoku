@@ -2,5 +2,10 @@
   "appId": "com.prokuiz.sudoku",
   "appName": "ProSudoku",
   "webDir": "www",
+  "server": {
+    "url": "https://alemmaxx.github.io/ProSudoku/",
+    "allowNavigation": ["alemmaxx.github.io"],
+    "errorPath": "offline.html"
+  },
   "android": { "backgroundColor": "#140f2e" }
 }
