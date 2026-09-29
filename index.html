@@ -53,6 +53,15 @@ button{font-family:inherit;color:inherit;border:none;background:none;cursor:poin
 .iconbtn:active{transform:scale(.92)}
 .spacer{width:44px;height:44px}
 .homeTop{display:flex;justify-content:flex-end}
+.setScroll{flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.iosCard{flex-direction:column;align-items:stretch;gap:10px}
+.iosHead{font-weight:800;font-size:16px}
+.linkBox{padding:12px;border-radius:12px;background:rgba(0,0,0,.3);border:1px dashed rgba(34,211,238,.5);color:var(--c1);font-size:13px;font-weight:700;word-break:break-all;text-align:center;user-select:text;-webkit-user-select:text}
+.qrWrap{text-align:center}
+#qrBox{display:inline-block;padding:10px;background:#fff;border-radius:14px;min-height:20px}
+#qrBox img,#qrBox canvas{display:block;width:150px;height:150px}
+.qrWrap small{display:block;color:var(--mut);font-size:11px;margin-top:6px}
+.steps{padding-left:22px;color:var(--mut);font-size:13px;line-height:1.7;font-weight:500}
 .upd{display:none;align-items:center;gap:10px;padding:12px 14px;margin-bottom:10px;border-radius:16px;background:linear-gradient(135deg,rgba(52,211,153,.2),rgba(34,211,238,.2));border:1px solid rgba(52,211,153,.5);font-weight:700;font-size:14px;cursor:pointer}
 .upd.on{display:flex;animation:fadeIn .4s}
 .upd b{margin-left:auto;padding:6px 12px;border-radius:10px;background:var(--ok);color:#052e16;font-size:13px}
@@ -252,7 +261,7 @@ input.inp:focus{border-color:var(--c2)}
 
   <!-- RANK -->
   <section class="screen" id="sRank">
-    <div class="topbar"><span class="spacer"></span><div class="title">🏆 Ranking</div><button class="iconbtn" onclick="loadRank()">⟳</button></div>
+    <div class="topbar"><button class="iconbtn" onclick="openAdmin()" title="Reset">🗑️</button><div class="title">🏆 Ranking</div><button class="iconbtn" onclick="loadRank()">⟳</button></div>
     <div class="tabs glass">
       <button class="tab on" data-k="rating" onclick="rankTab(this)">⚔️ Rating 1v1</button>
       <button class="tab" data-k="points" onclick="rankTab(this)">🧩 <span data-t="points">Mata</span></button>
@@ -266,6 +275,7 @@ input.inp:focus{border-color:var(--c2)}
   <!-- SETTINGS -->
   <section class="screen" id="sSet">
     <div class="topbar"><span class="spacer"></span><div class="title" data-t="set">Tetapan</div><span style="width:44px"></span></div>
+    <div class="setScroll">
     <div class="set glass"><span data-t="name">Nama pemain</span><button class="chip" style="margin:0" onclick="askName()" id="sName">—</button></div>
     <div class="set glass"><span data-t="lang">Bahasa</span><div class="seg"><button data-l="ms" onclick="setLang('ms')">BM</button><button data-l="en" onclick="setLang('en')">EN</button></div></div>
     <div class="set glass"><span data-t="sound">Bunyi</span><div class="tog" id="tSound" onclick="toggleSet('sound')"></div></div>
@@ -276,7 +286,20 @@ input.inp:focus{border-color:var(--c2)}
       <span data-t="mystats">Statistik saya</span>
       <div class="stats" style="margin:0" id="myStats"></div>
     </div>
-    <div class="foot" style="margin-top:auto">ProSudoku by ProKuiz © 2026</div>
+    <div class="set glass iosCard">
+      <div class="iosHead">📱 <span data-t="iosTitle">Pasang di iPhone / iPad</span></div>
+      <div class="linkBox" id="shareLinkTxt"></div>
+      <div class="row2"><button class="btn" style="padding:12px" onclick="copyLink()">📋 <span data-t="copyLink">Salin Link</span></button><button class="btn" style="padding:12px" onclick="shareLink()">📤 <span data-t="shareLink">Kongsi</span></button></div>
+      <div class="qrWrap"><div id="qrBox"></div><small data-t="qrSub">Imbas dengan kamera iPhone</small></div>
+      <ol class="steps">
+        <li data-t="ios1">Buka link dalam Safari (bukan Chrome)</li>
+        <li data-t="ios2">Tekan butang Share ⬆️ di bawah skrin</li>
+        <li data-t="ios3">Pilih "Add to Home Screen" → Add</li>
+        <li data-t="ios4">Buka ProSudoku dari ikon di skrin utama</li>
+      </ol>
+    </div>
+    <div class="foot" style="margin-top:6px">ProSudoku by ProKuiz © 2026</div>
+    </div>
     <button class="backbar" onclick="handleBack()">← <span data-t="back">Kembali</span></button>
   </section>
 </div>
@@ -316,6 +339,14 @@ input.inp:focus{border-color:var(--c2)}
   <input class="inp" id="nameInp" maxlength="14" placeholder="Nama anda" readonly inputmode="none">
   <div class="kb" id="kbName"></div>
   
+</div></div>
+
+<div class="modal" id="mAdmin"><div class="sheet">
+  <div class="big" style="font-size:40px">🗑️</div>
+  <h2 data-t="resetTitle">Padam Ranking</h2><p data-t="resetSub">Semua ranking, rating & mata pemain akan direset. Masukkan password admin.</p>
+  <input class="inp" id="pwInp" type="password" maxlength="20" placeholder="Password" readonly inputmode="none" style="letter-spacing:4px">
+  <div class="kb" id="kbPw"></div>
+  <button class="btn" style="margin-top:10px" onclick="closeM('mAdmin')" data-t="cancel">Batal</button>
 </div></div>
 
 <div class="modal" id="mJoin"><div class="sheet">
@@ -367,9 +398,9 @@ const firebaseConfig = {
 /* ============ i18n ============ */
 const T={
  ms:{solo:'Main Solo',online:'Lawan Online 1v1',rank:'Ranking',set:'Tetapan',resume:'Sambung Permainan',time:'Masa',mist:'Silap',score:'Markah',paused:'Dijeda',undo:'Undur',erase:'Padam',notes:'Nota',hint:'Petunjuk',points:'Mata',wins:'Menang',name:'Nama pemain',lang:'Bahasa',sound:'Bunyi',vib:'Getaran',hl:'Serlah nombor sama',mystats:'Statistik saya',cancel:'Batal',onlineSub:'Puzzle sama untuk kedua-dua pemain. Siapa siap dulu, menang!',quick:'Cari Lawan Rawak',mkroom:'Buat Bilik (Kawan)',joinroom:'Masuk Bilik Guna Kod',bot:'Lawan Bot',hello:'Selamat datang!',nameSub:'Masukkan nama untuk ranking & lawan online',save:'Simpan',codeSub:'Minta kod 5 huruf daripada kawan anda',join:'Masuk',again:'Main Lagi',home:'Menu Utama',no:'Tidak',yes:'Ya',
-  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',version:'Versi',checkUpd:'Semak Kemas Kini',updNow:'Kemas Kini',later:'Nanti',updTitle:'Versi baru tersedia!',updSub:'Versi {v} sedia untuk dimuat turun. Semua data, markah & ranking anda kekal selamat.',updBar:'Versi baru {v} tersedia',updLatest:'Anda guna versi terkini ✓',updFail:'Tak dapat semak kemas kini',updDl:'Memuat turun… buka fail APK untuk pasang',emptyCells:'petak kosong',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
+  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',iosTitle:'Pasang di iPhone / iPad',copyLink:'Salin Link',shareLink:'Kongsi',qrSub:'Imbas dengan kamera iPhone',ios1:'Buka link dalam Safari (bukan Chrome)',ios2:'Tekan butang Share ⬆️ di bawah skrin',ios3:'Pilih "Add to Home Screen" → Add',ios4:'Buka ProSudoku dari ikon di skrin utama',copied:'Link disalin ✓ Tampal dalam Safari',shareTxt:'Jom main ProSudoku! Buka dalam Safari:',resetTitle:'Padam Ranking',resetSub:'Semua ranking, rating & mata pemain akan direset. Masukkan password admin.',resetBtn:'Padam',resetOk:'Ranking berjaya dipadam ✓',resetBad:'Password salah',version:'Versi',checkUpd:'Semak Kemas Kini',updNow:'Kemas Kini',later:'Nanti',updTitle:'Versi baru tersedia!',updSub:'Versi {v} sedia untuk dimuat turun. Semua data, markah & ranking anda kekal selamat.',updBar:'Versi baru {v} tersedia',updLatest:'Anda guna versi terkini ✓',updFail:'Tak dapat semak kemas kini',updDl:'Memuat turun… buka fail APK untuk pasang',emptyCells:'petak kosong',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
  en:{solo:'Play Solo',online:'Online 1v1 Battle',rank:'Ranking',set:'Settings',resume:'Resume Game',time:'Time',mist:'Mistakes',score:'Score',paused:'Paused',undo:'Undo',erase:'Erase',notes:'Notes',hint:'Hint',points:'Points',wins:'Wins',name:'Player name',lang:'Language',sound:'Sound',vib:'Vibration',hl:'Highlight same numbers',mystats:'My stats',cancel:'Cancel',onlineSub:'Same puzzle for both players. First to finish wins!',quick:'Find Random Opponent',mkroom:'Create Room (Friend)',joinroom:'Join Room with Code',bot:'Play vs Bot',hello:'Welcome!',nameSub:'Enter a name for ranking & online play',save:'Save',codeSub:'Ask your friend for the 5-letter code',join:'Join',again:'Play Again',home:'Main Menu',no:'No',yes:'Yes',
-  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',version:'Version',checkUpd:'Check for Update',updNow:'Update',later:'Later',updTitle:'New version available!',updSub:'Version {v} is ready to download. All your data, scores & ranking stay safe.',updBar:'New version {v} available',updLatest:'You are on the latest version ✓',updFail:'Could not check for updates',updDl:'Downloading… open the APK file to install',emptyCells:'empty cells',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
+  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',iosTitle:'Install on iPhone / iPad',copyLink:'Copy Link',shareLink:'Share',qrSub:'Scan with iPhone camera',ios1:'Open the link in Safari (not Chrome)',ios2:'Tap the Share button ⬆️ at the bottom',ios3:'Choose "Add to Home Screen" → Add',ios4:'Open ProSudoku from the home screen icon',copied:'Link copied ✓ Paste it in Safari',shareTxt:'Play ProSudoku! Open in Safari:',resetTitle:'Delete Ranking',resetSub:'All rankings, ratings & points will be reset. Enter the admin password.',resetBtn:'Delete',resetOk:'Ranking deleted ✓',resetBad:'Wrong password',version:'Version',checkUpd:'Check for Update',updNow:'Update',later:'Later',updTitle:'New version available!',updSub:'Version {v} is ready to download. All your data, scores & ranking stay safe.',updBar:'New version {v} available',updLatest:'You are on the latest version ✓',updFail:'Could not check for updates',updDl:'Downloading… open the APK file to install',emptyCells:'empty cells',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
 };
 const $=id=>document.getElementById(id);
 const LS={get(k,d){try{const v=localStorage.getItem('psd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('psd_'+k,JSON.stringify(v))}catch(e){}}};
@@ -384,7 +415,7 @@ function refreshSet(){$('tSound').classList.toggle('on',S.sound);$('tVib').class
  $('myStats').innerHTML=`<div><b>${ME.games}</b><span>${t('games')}</span></div><div><b>${ME.solved}</b><span>${t('solvedN')}</span></div><div><b>${ME.wins}-${ME.losses}</b><span>W-L</span></div><div><b>${ME.rating}</b><span>${t('rating')}</span></div><div><b>${ME.points}</b><span>${t('points')}</span></div><div><b>${ME.best.easy?fmt(ME.best.easy):'—'}</b><span>${t('best')} (${t('easy')})</span></div>`}
 
 /* ============ UI helpers ============ */
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));if(id==='sHome')refreshHome();if(id==='sSet')refreshSet()}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));if(id==='sHome')refreshHome();if(id==='sSet'){refreshSet();makeQR()}}
 function openM(id){$(id).classList.add('on')}
 function closeM(id){$(id).classList.remove('on')}
 let toastT;function toast(m){const e=$('toast');e.textContent=m;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2400)}
@@ -599,6 +630,31 @@ async function playBot(){const d=waitDoc?(await waitDoc.get()).data():null;const
 function startBot(){const secs={easy:260,med:420,hard:620,exp:900}[G.diff]*(0.8+Math.random()*0.5);clearInterval(botTimer);
  botTimer=setInterval(()=>{if(!G||G.over||G.mode!=='bot')return clearInterval(botTimer);G.botP=Math.min(100,G.botP+100/secs*(0.5+Math.random()));updBars(Math.round(G.botP));if(G.botP>=100)finishOnline(false,'solved')},1000)}
 
+/* ============ Link iPhone (Tetapan) ============ */
+// Tukar kepada short link Tuan (cth https://s.id/ProSudoku) — mesti redirect ke GitHub Pages
+const SHARE_LINK='https://alemmaxx.github.io/ProSudoku/';
+$('shareLinkTxt').textContent=SHARE_LINK;
+function copyLink(){const done=()=>{toast('📋 '+t('copied'));sfx.ok()};
+ const fb=()=>{const ta=document.createElement('textarea');ta.value=SHARE_LINK;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){toast(SHARE_LINK)}ta.remove()};
+ try{navigator.clipboard?navigator.clipboard.writeText(SHARE_LINK).then(done,fb):fb()}catch(e){fb()}}
+function shareLink(){const d={title:'ProSudoku',text:t('shareTxt'),url:SHARE_LINK};
+ try{const Sh=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Share;if(Sh)return Sh.share(d).catch(()=>{})}catch(e){}
+ if(navigator.share)navigator.share(d).catch(()=>{});else location.href='https://wa.me/?text='+encodeURIComponent(t('shareTxt')+' '+SHARE_LINK)}
+let qrDone=false;
+function makeQR(){if(qrDone)return;const go=()=>{try{$('qrBox').innerHTML='';new QRCode($('qrBox'),{text:SHARE_LINK,width:300,height:300,colorDark:'#140f2e',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});qrDone=true}catch(e){$('qrBox').parentElement.style.display='none'}};
+ if(window.QRCode)return go();const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';sc.onload=go;sc.onerror=()=>{$('qrBox').parentElement.style.display='none'};document.head.appendChild(sc)}
+
+/* ============ Admin: padam ranking (password disemak oleh Firestore Rules) ============ */
+function openAdmin(){if(!needOnline())return;$('pwInp').value='';openM('mAdmin')}
+async function adminReset(){const pw=$('pwInp').value.trim();if(!pw)return;
+ try{const c=await db.collection('config').doc('app').get();const cur=c.exists?(parseInt(c.data().season)||1):1;const n=cur+1;
+  const b=db.batch();
+  b.set(db.collection('resets').doc(pw+'-'+n),{at:firebase.firestore.FieldValue.serverTimestamp(),by:ME.fid||''});
+  b.set(db.collection('config').doc('app'),{season:n},{merge:true});
+  await b.commit();
+  closeM('mAdmin');sfx.win();toast('🗑️ '+t('resetOk'));await pullProfile();loadRank()}
+ catch(e){console.warn(e);sfx.bad();vib([60,40,60]);$('pwInp').value='';toast('⛔ '+t('resetBad'))}}
+
 /* ============ Ranking ============ */
 let rankKey='rating';
 function openRank(){show('sRank');loadRank()}
@@ -606,7 +662,7 @@ function rankTab(b){document.querySelectorAll('.tab').forEach(x=>x.classList.tog
 async function loadRank(){const L=$('rankList'),P=$('podium');P.innerHTML='';
  if(!CFG_OK){L.innerHTML=`<div class="empty">${t('noNet')}</div>`;return}if(!db){L.innerHTML=`<div class="empty">${t('noSdk')}</div>`;initFB();return}
  L.innerHTML='<div class="spinner" style="width:50px;height:50px"></div>';
- try{const q=await db.collection('players').orderBy(rankKey,'desc').limit(50).get();const rows=q.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.name&&(parseInt(r.season)||1)===SEASON);
+ try{const q=await db.collection('players').orderBy(rankKey,'desc').limit(300).get();const rows=q.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.name&&(parseInt(r.season)||1)===SEASON).slice(0,50);
   if(!rows.length){L.innerHTML=`<div class="empty">${t('emptyRank').replace('\n','<br>')}</div>`;return}
   const sfxk=rankKey==='rating'?'⭐':rankKey==='points'?'pts':'W';
   const top=rows.slice(0,3);const ord=[top[1],top[0],top[2]];const cls=['p2','p1','p3'];const med=['2','1','3'];
@@ -659,18 +715,18 @@ applyLang();refreshHome();refreshSet();initFB();
 if(!ME.name)setTimeout(askName,600);
 addEventListener('online',()=>{if(auth&&auth.currentUser)setNet(true);else initFB()});addEventListener('offline',()=>setNet(false));
 /* In-app keyboard (tiada keyboard telefon) */
-function buildKB(box,inp,mode){const rows=mode==='code'?['1234567890','QWERTYUP','ASDFGHJKLZ','XCVBNM']:['1234567890','QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
- const okLbl=mode==='code'?t('join'):t('save');
+function buildKB(box,inp,mode){const rows=mode==='pw'?['1234567890','qwertyuiop','asdfghjkl','zxcvbnm']:mode==='code'?['1234567890','QWERTYUP','ASDFGHJKLZ','XCVBNM']:['1234567890','QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+ const okLbl=mode==='code'?t('join'):mode==='pw'?t('resetBtn'):t('save');
  box.innerHTML=rows.map((r,i)=>'<div class="r">'+[...r].map(c=>`<button data-k="${c}">${c}</button>`).join('')+(i===rows.length-1?'<button class="w" data-k="DEL">⌫</button>':'')+'</div>').join('')
   +'<div class="r">'+(mode==='name'?`<button class="sp" data-k=" ">␣</button>`:'')+`<button class="ok" data-k="OK">${okLbl}</button></div>`;
  box.querySelectorAll('button').forEach(b=>b.onclick=()=>kbPress(inp,mode,b.dataset.k))}
 function kbPress(inp,mode,k){sfx.tap();vib(8);const max=+inp.maxLength||14;let v=inp.value;
- if(k==='OK')return mode==='code'?joinRoom():saveName();
- if(k==='DEL')v=v.slice(0,-1);else if(v.length<max){if(k===' '){if(v&&!v.endsWith(' '))v+=' '}else{const ch=mode==='code'?k:((!v||v.endsWith(' '))?k.toUpperCase():k.toLowerCase());v+=ch}}
+ if(k==='OK')return mode==='code'?joinRoom():mode==='pw'?adminReset():saveName();
+ if(k==='DEL')v=v.slice(0,-1);else if(v.length<max){if(k===' '){if(v&&!v.endsWith(' '))v+=' '}else{const ch=mode==='code'?k:mode==='pw'?k.toLowerCase():((!v||v.endsWith(' '))?k.toUpperCase():k.toLowerCase());v+=ch}}
  inp.value=v}
-function buildKBs(){buildKB($('kbName'),$('nameInp'),'name');buildKB($('kbCode'),$('codeInp'),'code')}
+function buildKBs(){buildKB($('kbName'),$('nameInp'),'name');buildKB($('kbCode'),$('codeInp'),'code');buildKB($('kbPw'),$('pwInp'),'pw')}
 buildKBs();
-document.addEventListener('keydown',e=>{const m=document.querySelector('.modal.on');if(!m||(m.id!=='mName'&&m.id!=='mJoin'))return;const inp=m.id==='mName'?$('nameInp'):$('codeInp'),mode=m.id==='mName'?'name':'code';
+document.addEventListener('keydown',e=>{const m=document.querySelector('.modal.on');if(!m||!['mName','mJoin','mAdmin'].includes(m.id))return;const inp=m.id==='mName'?$('nameInp'):m.id==='mAdmin'?$('pwInp'):$('codeInp'),mode=m.id==='mName'?'name':m.id==='mAdmin'?'pw':'code';
  if(e.key==='Enter')kbPress(inp,mode,'OK');else if(e.key==='Backspace')kbPress(inp,mode,'DEL');else if(e.key===' ')kbPress(inp,mode,' ');else if(/^[a-z0-9]$/i.test(e.key))kbPress(inp,mode,e.key.toUpperCase());else return;e.preventDefault()});
 </script>
 </body>
