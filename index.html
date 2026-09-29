@@ -317,20 +317,21 @@ input.inp:focus{border-color:var(--c2)}
    1) FIREBASE CONFIG — tampal config projek Firebase anda di sini
    ============================================================ */
 const firebaseConfig = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_PROJECT_ID.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyBNmqnpP7AijfQB5kxhjzIsR-AN3S8W9Oo",
+  authDomain: "prokuiz-aplikasi.firebaseapp.com",
+  databaseURL: "https://prokuiz-aplikasi-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "prokuiz-aplikasi",
+  storageBucket: "prokuiz-aplikasi.firebasestorage.app",
+  messagingSenderId: "295859023295",
+  appId: "1:295859023295:web:50514472d12b059fd0850a"
 };
 
 /* ============ i18n ============ */
 const T={
  ms:{solo:'Main Solo',online:'Lawan Online 1v1',rank:'Ranking',set:'Tetapan',resume:'Sambung Permainan',time:'Masa',mist:'Silap',score:'Markah',paused:'Dijeda',undo:'Undur',erase:'Padam',notes:'Nota',hint:'Petunjuk',points:'Mata',wins:'Menang',name:'Nama pemain',lang:'Bahasa',sound:'Bunyi',vib:'Getaran',hl:'Serlah nombor sama',mystats:'Statistik saya',cancel:'Batal',onlineSub:'Puzzle sama untuk kedua-dua pemain. Siapa siap dulu, menang!',quick:'Cari Lawan Rawak',mkroom:'Buat Bilik (Kawan)',joinroom:'Masuk Bilik Guna Kod',bot:'Lawan Bot',hello:'Selamat datang!',nameSub:'Masukkan nama untuk ranking & lawan online',save:'Simpan',codeSub:'Minta kod 5 huruf daripada kawan anda',join:'Masuk',again:'Main Lagi',home:'Menu Utama',no:'Tidak',yes:'Ya',
-  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'Mod online belum disediakan (Firebase). Hanya solo tersedia.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
+  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
  en:{solo:'Play Solo',online:'Online 1v1 Battle',rank:'Ranking',set:'Settings',resume:'Resume Game',time:'Time',mist:'Mistakes',score:'Score',paused:'Paused',undo:'Undo',erase:'Erase',notes:'Notes',hint:'Hint',points:'Points',wins:'Wins',name:'Player name',lang:'Language',sound:'Sound',vib:'Vibration',hl:'Highlight same numbers',mystats:'My stats',cancel:'Cancel',onlineSub:'Same puzzle for both players. First to finish wins!',quick:'Find Random Opponent',mkroom:'Create Room (Friend)',joinroom:'Join Room with Code',bot:'Play vs Bot',hello:'Welcome!',nameSub:'Enter a name for ranking & online play',save:'Save',codeSub:'Ask your friend for the 5-letter code',join:'Join',again:'Play Again',home:'Main Menu',no:'No',yes:'Yes',
-  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'Online mode not set up yet (Firebase). Solo only.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
+  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
 };
 const $=id=>document.getElementById(id);
 const LS={get(k,d){try{const v=localStorage.getItem('psd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('psd_'+k,JSON.stringify(v))}catch(e){}}};
@@ -480,13 +481,23 @@ function pickDiff(d){closeM('mDiff');if(pickMode==='solo'){if(!ME.name)return as
 
 /* ============ Firebase / Online ============ */
 let db=null,auth=null,online=false,unsubMatch=null,waitDoc=null,botTimer=null,waitTimer=null;
-const FB_OK=typeof firebase!=='undefined'&&!firebaseConfig.apiKey.startsWith('PASTE');
-function setNet(on){online=on;$('netDot').classList.toggle('on',on);$('netTxt').textContent=on?t('online1'):'Offline'}
-async function initFB(){if(!FB_OK){setNet(false);return}
- try{firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();
-  auth.onAuthStateChanged(u=>{if(u){if(!ME.fid||ME.fid!==u.uid){ME.fid=u.uid;LS.set('me',ME)}setNet(true);pullProfile()}else setNet(false)});
-  await auth.signInAnonymously()}catch(e){console.warn('FB',e);setNet(false)}}
-function needOnline(){if(!FB_OK){toast(t('noNet'));return false}if(!online||!navigator.onLine){toast(t('offline'));return false}if(!ME.name){askName();return false}return true}
+const CFG_OK=!!(firebaseConfig&&firebaseConfig.apiKey&&!String(firebaseConfig.apiKey).startsWith('PASTE'));
+let fbErr='',fbInit=false;
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('load '+src));document.head.appendChild(s)})}
+async function loadSDK(){if(typeof firebase!=='undefined'&&firebase.firestore&&firebase.auth)return;const v='https://www.gstatic.com/firebasejs/10.12.2/';
+ if(typeof firebase==='undefined')await loadScript(v+'firebase-app-compat.js');if(!firebase.auth)await loadScript(v+'firebase-auth-compat.js');if(!firebase.firestore)await loadScript(v+'firebase-firestore-compat.js')}
+function setNet(on){online=on;$('netDot').classList.toggle('on',on);$('netTxt').textContent=on?t('online1'):(CFG_OK?'Offline':'Offline · no config')}
+async function initFB(){if(!CFG_OK){setNet(false);return}
+ try{await loadSDK()}catch(e){fbErr='SDK';setNet(false);return}
+ try{if(!fbInit){firebase.initializeApp(firebaseConfig);fbInit=true;auth=firebase.auth();db=firebase.firestore();
+   auth.onAuthStateChanged(u=>{if(u){fbErr='';if(!ME.fid||ME.fid!==u.uid){ME.fid=u.uid;LS.set('me',ME)}setNet(true);pullProfile()}else setNet(false)})}
+  if(!auth.currentUser)await auth.signInAnonymously()}catch(e){console.warn('FB',e);fbErr=(e&&(e.code||e.message))||'auth';setNet(false)}}
+function needOnline(){
+ if(!CFG_OK){toast(t('noNet'));return false}
+ if(!navigator.onLine){toast(t('offline'));return false}
+ if(fbErr==='SDK'||!db){toast(t('noSdk'));initFB();return false}
+ if(!online){toast(t('noAuth')+(fbErr?' ('+fbErr+')':''));initFB();return false}
+ if(!ME.name){askName();return false}return true}
 async function pullProfile(){try{const d=await db.collection('players').doc(ME.fid).get();if(d.exists){const x=d.data();
   ['rating','wins','losses'].forEach(k=>{if(typeof x[k]==='number')ME[k]=x[k]});ME.points=Math.max(ME.points,x.points||0);ME.solved=Math.max(ME.solved,x.solved||0);LS.set('me',ME);refreshHome()}pushProfile()}catch(e){console.warn(e)}}
 function pushProfile(){if(!db||!ME.fid||!ME.name)return;db.collection('players').doc(ME.fid).set({name:ME.name,rating:ME.rating,points:ME.points,wins:ME.wins,losses:ME.losses,solved:ME.solved,games:ME.games,updated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>console.warn(e))}
@@ -551,7 +562,7 @@ let rankKey='rating';
 function openRank(){show('sRank');loadRank()}
 function rankTab(b){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));rankKey=b.dataset.k;loadRank()}
 async function loadRank(){const L=$('rankList'),P=$('podium');P.innerHTML='';
- if(!FB_OK||!db){L.innerHTML=`<div class="empty">${t('noNet')}</div>`;return}
+ if(!CFG_OK){L.innerHTML=`<div class="empty">${t('noNet')}</div>`;return}if(!db){L.innerHTML=`<div class="empty">${t('noSdk')}</div>`;initFB();return}
  L.innerHTML='<div class="spinner" style="width:50px;height:50px"></div>';
  try{const q=await db.collection('players').orderBy(rankKey,'desc').limit(50).get();const rows=q.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.name);
   if(!rows.length){L.innerHTML=`<div class="empty">${t('emptyRank').replace('\n','<br>')}</div>`;return}
@@ -580,7 +591,7 @@ function handleBack(){
 /* ============ Boot ============ */
 applyLang();refreshHome();refreshSet();initFB();
 if(!ME.name)setTimeout(askName,600);
-addEventListener('online',()=>{if(auth&&auth.currentUser)setNet(true)});addEventListener('offline',()=>setNet(false));
+addEventListener('online',()=>{if(auth&&auth.currentUser)setNet(true);else initFB()});addEventListener('offline',()=>setNet(false));
 $('nameInp').addEventListener('keydown',e=>{if(e.key==='Enter')saveName()});$('codeInp').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom()});
 </script>
 </body>
