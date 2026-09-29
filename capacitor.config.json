@@ -1,0 +1,6 @@
+{
+  "appId": "com.prokuiz.sudoku",
+  "appName": "ProSudoku",
+  "webDir": "www",
+  "android": { "backgroundColor": "#140f2e" }
+}
