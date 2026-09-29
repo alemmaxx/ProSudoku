@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,10 +23,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Sediakan fail web
+      - name: Sediakan fail web (+ nombor versi)
         run: |
           mkdir -p www
-          cp index.html www/index.html
+          sed "s/__APP_BUILD__/${{ github.run_number }}/" index.html > www/index.html
 
       - name: Install Capacitor
         run: npm install
@@ -36,6 +39,24 @@ jobs:
 
       - name: Sync
         run: npx cap sync android
+
+      - name: Set versi APK
+        run: |
+          sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/" android/app/build.gradle
+          sed -i "s/versionName \"[^\"]*\"/versionName \"1.0.${{ github.run_number }}\"/" android/app/build.gradle
+          grep -n "version" android/app/build.gradle
+
+      - name: Kunci tandatangan tetap (supaya update tak perlu uninstall)
+        env:
+          KS: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          mkdir -p ~/.android
+          if [ -n "$KS" ]; then
+            echo "$KS" | base64 -d > ~/.android/debug.keystore
+            echo "Guna keystore tetap dari secret"
+          else
+            echo "::warning::Secret KEYSTORE_BASE64 tiada - APK akan guna kunci rawak (update perlu uninstall)"
+          fi
 
       - name: Build APK
         working-directory: android
@@ -51,3 +72,11 @@ jobs:
         with:
           name: ProSudoku-APK
           path: ProSudoku.apk
+
+      - name: Terbit release (untuk auto update)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: ProSudoku 1.0.${{ github.run_number }}
+          files: ProSudoku.apk
+          make_latest: true
