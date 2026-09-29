@@ -45,6 +45,10 @@ button{font-family:inherit;color:inherit;border:none;background:none;cursor:poin
 .iconbtn{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);font-size:20px}
 .iconbtn:active{transform:scale(.92)}
 .spacer{width:44px;height:44px}
+.homeTop{display:flex;justify-content:flex-end}
+.upd{display:none;align-items:center;gap:10px;padding:12px 14px;margin-bottom:10px;border-radius:16px;background:linear-gradient(135deg,rgba(52,211,153,.2),rgba(34,211,238,.2));border:1px solid rgba(52,211,153,.5);font-weight:700;font-size:14px;cursor:pointer}
+.upd.on{display:flex;animation:fadeIn .4s}
+.upd b{margin-left:auto;padding:6px 12px;border-radius:10px;background:var(--ok);color:#052e16;font-size:13px}
 .backbar{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;padding:13px;border-radius:16px;background:var(--glass2);border:1px solid var(--line);font-weight:700;font-size:15px;flex:none}
 .backbar:active{transform:scale(.97);background:var(--grad)}
 .backbar.exit{background:rgba(244,63,94,.12);border-color:rgba(244,63,94,.35);color:#fecdd3}
@@ -188,6 +192,7 @@ input.inp:focus{border-color:var(--c2)}
 <div class="app">
   <!-- HOME -->
   <section class="screen on" id="sHome">
+    <div class="homeTop"><div class="seg"><button data-l="ms" onclick="setLang('ms')">BM</button><button data-l="en" onclick="setLang('en')">EN</button></div></div>
     <div class="logo">
       <div class="logoBox"><span>5</span><span class="e"></span><span>3</span><span class="e"></span><span>7</span><span class="e"></span><span>9</span><span class="e"></span><span>1</span></div>
       <h1>ProSudoku</h1><small>BY PROKUIZ</small>
@@ -197,6 +202,7 @@ input.inp:focus{border-color:var(--c2)}
       <div><div class="nm" id="hName">Pemain</div><div class="st" id="hStat">—</div></div>
       <div class="chip" id="hRating">⭐ 1000</div>
     </div>
+    <div class="upd" id="updBar" onclick="openUpdate()">🚀 <span id="updTxt"></span><b data-t="updNow">Kemas Kini</b></div>
     <div class="menu">
       <button class="btn pri" onclick="openDiff('solo')"><span class="ico">🧩</span><span data-t="solo">Main Solo</span></button>
       <button class="btn gold" onclick="openOnline()"><span class="ico">⚔️</span><span data-t="online">Lawan Online 1v1</span></button>
@@ -207,7 +213,7 @@ input.inp:focus{border-color:var(--c2)}
       <button class="btn" id="btnResume" style="display:none" onclick="resumeSaved()"><span class="ico">▶️</span><span data-t="resume">Sambung Permainan</span></button>
     </div>
     <button class="backbar exit" onclick="askExit()">⏻ <span data-t="exitBtn">Keluar App</span></button>
-    <div class="foot"><span class="netdot" id="netDot"></span><span id="netTxt">Offline</span> · v1.0</div>
+    <div class="foot"><span class="netdot" id="netDot"></span><span id="netTxt">Offline</span> · v<span class="verTxt"></span></div>
   </section>
 
   <!-- GAME -->
@@ -258,6 +264,7 @@ input.inp:focus{border-color:var(--c2)}
     <div class="set glass"><span data-t="sound">Bunyi</span><div class="tog" id="tSound" onclick="toggleSet('sound')"></div></div>
     <div class="set glass"><span data-t="vib">Getaran</span><div class="tog" id="tVib" onclick="toggleSet('vib')"></div></div>
     <div class="set glass"><span data-t="hl">Serlah nombor sama</span><div class="tog" id="tHl" onclick="toggleSet('hl')"></div></div>
+    <div class="set glass"><span><span data-t="version">Versi</span> <span class="verTxt" style="color:var(--mut)"></span></span><button class="chip" style="margin:0" onclick="checkUpdate(true)" data-t="checkUpd">Semak Kemas Kini</button></div>
     <div class="set glass" style="flex-direction:column;align-items:stretch;gap:8px">
       <span data-t="mystats">Statistik saya</span>
       <div class="stats" style="margin:0" id="myStats"></div>
@@ -329,6 +336,11 @@ input.inp:focus{border-color:var(--c2)}
   <div class="row2"><button class="btn" onclick="closeM('mConfirm')" data-t="no">Tidak</button><button class="btn pri" id="cYes" data-t="yes">Ya</button></div>
 </div></div>
 
+<div class="modal" id="mUpd"><div class="sheet">
+  <div class="big">🚀</div><h2 data-t="updTitle">Versi baru tersedia!</h2>
+  <p id="updSub"></p>
+  <div class="stack"><button class="btn pri" onclick="doUpdate()" data-t="updNow">Kemas Kini</button><button class="btn" onclick="closeM('mUpd')" data-t="later">Nanti</button></div>
+</div></div>
 <div id="toast"></div>
 
 <script>
@@ -348,9 +360,9 @@ const firebaseConfig = {
 /* ============ i18n ============ */
 const T={
  ms:{solo:'Main Solo',online:'Lawan Online 1v1',rank:'Ranking',set:'Tetapan',resume:'Sambung Permainan',time:'Masa',mist:'Silap',score:'Markah',paused:'Dijeda',undo:'Undur',erase:'Padam',notes:'Nota',hint:'Petunjuk',points:'Mata',wins:'Menang',name:'Nama pemain',lang:'Bahasa',sound:'Bunyi',vib:'Getaran',hl:'Serlah nombor sama',mystats:'Statistik saya',cancel:'Batal',onlineSub:'Puzzle sama untuk kedua-dua pemain. Siapa siap dulu, menang!',quick:'Cari Lawan Rawak',mkroom:'Buat Bilik (Kawan)',joinroom:'Masuk Bilik Guna Kod',bot:'Lawan Bot',hello:'Selamat datang!',nameSub:'Masukkan nama untuk ranking & lawan online',save:'Simpan',codeSub:'Minta kod 5 huruf daripada kawan anda',join:'Masuk',again:'Main Lagi',home:'Menu Utama',no:'Tidak',yes:'Ya',
-  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
+  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',version:'Versi',checkUpd:'Semak Kemas Kini',updNow:'Kemas Kini',later:'Nanti',updTitle:'Versi baru tersedia!',updSub:'Versi {v} sedia untuk dimuat turun. Semua data, markah & ranking anda kekal selamat.',updBar:'Versi baru {v} tersedia',updLatest:'Anda guna versi terkini ✓',updFail:'Tak dapat semak kemas kini',updDl:'Memuat turun… buka fail APK untuk pasang',emptyCells:'petak kosong',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
  en:{solo:'Play Solo',online:'Online 1v1 Battle',rank:'Ranking',set:'Settings',resume:'Resume Game',time:'Time',mist:'Mistakes',score:'Score',paused:'Paused',undo:'Undo',erase:'Erase',notes:'Notes',hint:'Hint',points:'Points',wins:'Wins',name:'Player name',lang:'Language',sound:'Sound',vib:'Vibration',hl:'Highlight same numbers',mystats:'My stats',cancel:'Cancel',onlineSub:'Same puzzle for both players. First to finish wins!',quick:'Find Random Opponent',mkroom:'Create Room (Friend)',joinroom:'Join Room with Code',bot:'Play vs Bot',hello:'Welcome!',nameSub:'Enter a name for ranking & online play',save:'Save',codeSub:'Ask your friend for the 5-letter code',join:'Join',again:'Play Again',home:'Main Menu',no:'No',yes:'Yes',
-  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
+  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',version:'Version',checkUpd:'Check for Update',updNow:'Update',later:'Later',updTitle:'New version available!',updSub:'Version {v} is ready to download. All your data, scores & ranking stay safe.',updBar:'New version {v} available',updLatest:'You are on the latest version ✓',updFail:'Could not check for updates',updDl:'Downloading… open the APK file to install',emptyCells:'empty cells',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
 };
 const $=id=>document.getElementById(id);
 const LS={get(k,d){try{const v=localStorage.getItem('psd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('psd_'+k,JSON.stringify(v))}catch(e){}}};
@@ -359,7 +371,7 @@ let ME=LS.get('me',null);
 if(!ME){ME={uid:'L'+Math.random().toString(36).slice(2,12),name:'',rating:1000,points:0,wins:0,losses:0,games:0,solved:0,best:{}};LS.set('me',ME)}
 const t=k=>(T[S.lang]&&T[S.lang][k])||T.ms[k]||k;
 function applyLang(){document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.l===S.lang));$('nameInp').placeholder=S.lang==='ms'?'Nama anda':'Your name'}
-function setLang(l){S.lang=l;LS.set('settings',S);applyLang();refreshHome();buildKBs()}
+function setLang(l){S.lang=l;LS.set('settings',S);applyLang();refreshHome();buildKBs();if(typeof updInfo!=='undefined'&&updInfo)$('updTxt').textContent=t('updBar').replace('{v}',verLabel(updInfo.n))}
 function toggleSet(k){S[k]=!S[k];LS.set('settings',S);refreshSet();if(k==='hl')render()}
 function refreshSet(){$('tSound').classList.toggle('on',S.sound);$('tVib').classList.toggle('on',S.vib);$('tHl').classList.toggle('on',S.hl);$('sName').textContent=ME.name||'—';
  $('myStats').innerHTML=`<div><b>${ME.games}</b><span>${t('games')}</span></div><div><b>${ME.solved}</b><span>${t('solvedN')}</span></div><div><b>${ME.wins}-${ME.losses}</b><span>W-L</span></div><div><b>${ME.rating}</b><span>${t('rating')}</span></div><div><b>${ME.points}</b><span>${t('points')}</span></div><div><b>${ME.best.easy?fmt(ME.best.easy):'—'}</b><span>${t('best')} (${t('easy')})</span></div>`}
@@ -493,7 +505,7 @@ function leaveGame(){if(!G||G.over){show('sHome');return}
 /* ============ Difficulty picker ============ */
 let pickMode='solo';
 function openDiff(mode){pickMode=mode;$('dTitle').textContent=t('pickDiff');$('dSub').textContent=t('diffSub');
- $('dList').innerHTML=Object.entries(DIFF).map(([k,d])=>`<button class="diff" onclick="pickDiff('${k}')"><span class="d" style="background:${d.col}33">${d.ic}</span><span>${t(k)}<small>${81-d.clues} ${S.lang==='ms'?'petak kosong':'empty cells'} · ${d.base} pts${ME.best[k]?' · 🏅 '+fmt(ME.best[k]):''}</small></span></button>`).join('');
+ $('dList').innerHTML=Object.entries(DIFF).map(([k,d])=>`<button class="diff" onclick="pickDiff('${k}')"><span class="d" style="background:${d.col}33">${d.ic}</span><span>${t(k)}<small>${81-d.clues} ${t('emptyCells')} · ${d.base} pts${ME.best[k]?' · 🏅 '+fmt(ME.best[k]):''}</small></span></button>`).join('');
  openM('mDiff')}
 function pickDiff(d){closeM('mDiff');if(pickMode==='solo'){if(!ME.name)return askName();newGame(d,Date.now()%2147483647,'solo')}else if(pickMode==='match')findMatch(d);else createRoom(d)}
 
@@ -605,6 +617,25 @@ function handleBack(){
 (function(){let native=false;try{const A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(A&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){A.addListener('backButton',handleBack);native=true}}catch(e){}
  document.addEventListener('backbutton',e=>{e.preventDefault();handleBack()},false);
  if(!native){try{history.pushState({ps:1},'');addEventListener('popstate',()=>{history.pushState({ps:1},'');handleBack()})}catch(e){}}})();
+
+/* ============ Auto update (GitHub Releases) ============ */
+const APP_BUILD=parseInt('__APP_BUILD__')||0;           // diisi automatik oleh GitHub Actions
+const UPDATE_REPO='alemmaxx/ProSudoku';                  // repo GitHub app ini
+let updInfo=null;
+function verLabel(n){return '1.0.'+n}
+async function checkUpdate(manual){
+ if(!APP_BUILD){if(manual)toast(t('updLatest'));return}
+ try{const r=await fetch(`https://api.github.com/repos/${UPDATE_REPO}/releases/latest`,{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();
+  const n=parseInt(String(j.tag_name||'').split('.').pop())||0;const a=(j.assets||[]).find(x=>/\.apk$/i.test(x.name));
+  if(n>APP_BUILD&&a){updInfo={n,url:a.browser_download_url};$('updTxt').textContent=t('updBar').replace('{v}',verLabel(n));$('updBar').classList.add('on');
+   const skip=LS.get('updSkip',0);if(manual||skip!==n)openUpdate()}
+  else{$('updBar').classList.remove('on');if(manual)toast(t('updLatest'))}
+ }catch(e){if(manual)toast(t('updFail'))}}
+function openUpdate(){if(!updInfo)return;$('updSub').textContent=t('updSub').replace('{v}',verLabel(updInfo.n));$('mUpd').querySelector('[data-t="later"]').onclick=()=>{LS.set('updSkip',updInfo.n);closeM('mUpd')};openM('mUpd')}
+function doUpdate(){if(!updInfo)return;if(G&&G.mode==='solo'&&!G.over)saveSolo();LS.set('me',ME);closeM('mUpd');toast(t('updDl'));
+ setTimeout(()=>{try{const isNative=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform();if(isNative)location.href=updInfo.url;else window.open(updInfo.url,'_blank')}catch(e){location.href=updInfo.url}},400)}
+document.querySelectorAll('.verTxt').forEach(e=>e.textContent=APP_BUILD?verLabel(APP_BUILD):'1.0 (dev)');
+setTimeout(()=>checkUpdate(false),2500);
 
 /* ============ Boot ============ */
 applyLang();refreshHome();refreshSet();initFB();
