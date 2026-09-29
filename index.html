@@ -44,6 +44,20 @@ button{font-family:inherit;color:inherit;border:none;background:none;cursor:poin
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .iconbtn{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);font-size:20px}
 .iconbtn:active{transform:scale(.92)}
+.spacer{width:44px;height:44px}
+.backbar{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;padding:13px;border-radius:16px;background:var(--glass2);border:1px solid var(--line);font-weight:700;font-size:15px;flex:none}
+.backbar:active{transform:scale(.97);background:var(--grad)}
+.backbar.exit{background:rgba(244,63,94,.12);border-color:rgba(244,63,94,.35);color:#fecdd3}
+.kb{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.kb .r{display:flex;gap:5px;justify-content:center}
+.kb button{flex:1;min-width:0;max-width:40px;height:44px;border-radius:10px;background:var(--glass2);border:1px solid var(--line);font-weight:700;font-size:16px}
+.kb button:active{background:var(--grad);transform:scale(.92)}
+.kb button.w{max-width:none;flex:2}
+.kb button.sp{max-width:none;flex:5}
+.kb button.ok{max-width:none;flex:2;background:var(--grad);border:none}
+input.inp[readonly]{caret-color:transparent;cursor:default}
+.sheet{max-height:94vh;overflow:auto}
+#mName .big,#mJoin .big{font-size:40px}
 .title{font-weight:800;font-size:19px}
 /* HOME */
 .logo{text-align:center;margin:18px 0 8px}
@@ -78,7 +92,7 @@ button{font-family:inherit;color:inherit;border:none;background:none;cursor:poin
 .bar.me i{background:linear-gradient(90deg,var(--c1),var(--c2))}
 .bar.op i{background:linear-gradient(90deg,#f97316,var(--c3))}
 .vsrow .p{width:36px;text-align:right}
-.boardWrap{padding:8px;margin:0 auto;width:100%;max-width:min(100%,calc(100vh - 330px))}
+.boardWrap{padding:8px;margin:0 auto;width:100%;max-width:min(100%,calc(100vh - 385px))}
 .board{display:grid;grid-template-columns:repeat(9,1fr);aspect-ratio:1;border-radius:14px;overflow:hidden;background:rgba(8,6,28,.72);border:2px solid rgba(255,255,255,.35);position:relative}
 .cell{position:relative;display:grid;place-items:center;font-weight:700;font-size:clamp(18px,5.6vw,28px);border-right:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1);transition:background .15s;cursor:pointer}
 .cell:nth-child(9n){border-right:none}
@@ -192,13 +206,14 @@ input.inp:focus{border-color:var(--c2)}
       </div>
       <button class="btn" id="btnResume" style="display:none" onclick="resumeSaved()"><span class="ico">▶️</span><span data-t="resume">Sambung Permainan</span></button>
     </div>
+    <button class="backbar exit" onclick="askExit()">⏻ <span data-t="exitBtn">Keluar App</span></button>
     <div class="foot"><span class="netdot" id="netDot"></span><span id="netTxt">Offline</span> · v1.0</div>
   </section>
 
   <!-- GAME -->
   <section class="screen" id="sGame">
     <div class="topbar">
-      <button class="iconbtn" onclick="leaveGame()">←</button>
+      <span class="spacer"></span>
       <div class="title" id="gTitle">Mudah</div>
       <button class="iconbtn" id="pauseBtn" onclick="togglePause()">⏸</button>
     </div>
@@ -208,7 +223,7 @@ input.inp:focus{border-color:var(--c2)}
     </div>
     <div class="hud">
       <div class="box glass"><div class="k" data-t="time">Masa</div><div class="v" id="gTime">00:00</div></div>
-      <div class="box glass"><div class="k" data-t="mist">Silap</div><div class="v hearts" id="gMist">❤️❤️❤️</div></div>
+      <div class="box glass"><div class="k" data-t="mist">Silap</div><div class="v" id="gMist">0</div></div>
       <div class="box glass"><div class="k" data-t="score">Markah</div><div class="v" id="gScore">0</div></div>
     </div>
     <div class="boardWrap glass"><div class="board" id="board"><div class="pause" id="pauseOv">⏸ <span data-t="paused">Dijeda</span></div></div></div>
@@ -219,11 +234,12 @@ input.inp:focus{border-color:var(--c2)}
       <button class="tool" id="hintBtn" onclick="hint()"><span class="ic">💡</span><span data-t="hint">Petunjuk</span><span class="badge" id="hintN">3</span></button>
     </div>
     <div class="pad" id="pad"></div>
+    <button class="backbar" onclick="handleBack()">← <span data-t="back">Kembali</span></button>
   </section>
 
   <!-- RANK -->
   <section class="screen" id="sRank">
-    <div class="topbar"><button class="iconbtn" onclick="show('sHome')">←</button><div class="title">🏆 Ranking</div><button class="iconbtn" onclick="loadRank()">⟳</button></div>
+    <div class="topbar"><span class="spacer"></span><div class="title">🏆 Ranking</div><button class="iconbtn" onclick="loadRank()">⟳</button></div>
     <div class="tabs glass">
       <button class="tab on" data-k="rating" onclick="rankTab(this)">⚔️ Rating 1v1</button>
       <button class="tab" data-k="points" onclick="rankTab(this)">🧩 <span data-t="points">Mata</span></button>
@@ -231,11 +247,12 @@ input.inp:focus{border-color:var(--c2)}
     </div>
     <div class="podium" id="podium"></div>
     <div class="list glass" id="rankList"></div>
+    <button class="backbar" onclick="handleBack()">← <span data-t="back">Kembali</span></button>
   </section>
 
   <!-- SETTINGS -->
   <section class="screen" id="sSet">
-    <div class="topbar"><button class="iconbtn" onclick="show('sHome')">←</button><div class="title" data-t="set">Tetapan</div><span style="width:44px"></span></div>
+    <div class="topbar"><span class="spacer"></span><div class="title" data-t="set">Tetapan</div><span style="width:44px"></span></div>
     <div class="set glass"><span data-t="name">Nama pemain</span><button class="chip" style="margin:0" onclick="askName()" id="sName">—</button></div>
     <div class="set glass"><span data-t="lang">Bahasa</span><div class="seg"><button data-l="ms" onclick="setLang('ms')">BM</button><button data-l="en" onclick="setLang('en')">EN</button></div></div>
     <div class="set glass"><span data-t="sound">Bunyi</span><div class="tog" id="tSound" onclick="toggleSet('sound')"></div></div>
@@ -246,6 +263,7 @@ input.inp:focus{border-color:var(--c2)}
       <div class="stats" style="margin:0" id="myStats"></div>
     </div>
     <div class="foot" style="margin-top:auto">ProSudoku by ProKuiz © 2026</div>
+    <button class="backbar" onclick="handleBack()">← <span data-t="back">Kembali</span></button>
   </section>
 </div>
 
@@ -281,16 +299,17 @@ input.inp:focus{border-color:var(--c2)}
 <div class="modal" id="mName"><div class="sheet">
   <div class="big">👋</div>
   <h2 data-t="hello">Selamat datang!</h2><p data-t="nameSub">Masukkan nama untuk ranking & lawan online</p>
-  <input class="inp" id="nameInp" maxlength="14" placeholder="Nama anda">
-  <button class="btn pri" style="margin-top:12px" onclick="saveName()" data-t="save">Simpan</button>
+  <input class="inp" id="nameInp" maxlength="14" placeholder="Nama anda" readonly inputmode="none">
+  <div class="kb" id="kbName"></div>
+  
 </div></div>
 
 <div class="modal" id="mJoin"><div class="sheet">
   <div class="big">🔑</div>
   <h2 data-t="joinroom">Masuk Bilik Guna Kod</h2><p data-t="codeSub">Minta kod 5 huruf daripada kawan anda</p>
-  <input class="inp" id="codeInp" maxlength="5" placeholder="ABCDE" style="text-transform:uppercase;letter-spacing:6px;font-size:24px">
+  <input class="inp" id="codeInp" maxlength="5" placeholder="ABCDE" style="text-transform:uppercase;letter-spacing:6px;font-size:24px" readonly inputmode="none">
+  <div class="kb" id="kbCode"></div>
   <div class="stack" style="margin-top:12px">
-    <button class="btn pri" onclick="joinRoom()" data-t="join">Masuk</button>
     <button class="btn" onclick="closeM('mJoin')" data-t="cancel">Batal</button>
   </div>
 </div></div>
@@ -329,9 +348,9 @@ const firebaseConfig = {
 /* ============ i18n ============ */
 const T={
  ms:{solo:'Main Solo',online:'Lawan Online 1v1',rank:'Ranking',set:'Tetapan',resume:'Sambung Permainan',time:'Masa',mist:'Silap',score:'Markah',paused:'Dijeda',undo:'Undur',erase:'Padam',notes:'Nota',hint:'Petunjuk',points:'Mata',wins:'Menang',name:'Nama pemain',lang:'Bahasa',sound:'Bunyi',vib:'Getaran',hl:'Serlah nombor sama',mystats:'Statistik saya',cancel:'Batal',onlineSub:'Puzzle sama untuk kedua-dua pemain. Siapa siap dulu, menang!',quick:'Cari Lawan Rawak',mkroom:'Buat Bilik (Kawan)',joinroom:'Masuk Bilik Guna Kod',bot:'Lawan Bot',hello:'Selamat datang!',nameSub:'Masukkan nama untuk ranking & lawan online',save:'Simpan',codeSub:'Minta kod 5 huruf daripada kawan anda',join:'Masuk',again:'Main Lagi',home:'Menu Utama',no:'Tidak',yes:'Ya',
-  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
+  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
  en:{solo:'Play Solo',online:'Online 1v1 Battle',rank:'Ranking',set:'Settings',resume:'Resume Game',time:'Time',mist:'Mistakes',score:'Score',paused:'Paused',undo:'Undo',erase:'Erase',notes:'Notes',hint:'Hint',points:'Points',wins:'Wins',name:'Player name',lang:'Language',sound:'Sound',vib:'Vibration',hl:'Highlight same numbers',mystats:'My stats',cancel:'Cancel',onlineSub:'Same puzzle for both players. First to finish wins!',quick:'Find Random Opponent',mkroom:'Create Room (Friend)',joinroom:'Join Room with Code',bot:'Play vs Bot',hello:'Welcome!',nameSub:'Enter a name for ranking & online play',save:'Save',codeSub:'Ask your friend for the 5-letter code',join:'Join',again:'Play Again',home:'Main Menu',no:'No',yes:'Yes',
-  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
+  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
 };
 const $=id=>document.getElementById(id);
 const LS={get(k,d){try{const v=localStorage.getItem('psd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('psd_'+k,JSON.stringify(v))}catch(e){}}};
@@ -340,7 +359,7 @@ let ME=LS.get('me',null);
 if(!ME){ME={uid:'L'+Math.random().toString(36).slice(2,12),name:'',rating:1000,points:0,wins:0,losses:0,games:0,solved:0,best:{}};LS.set('me',ME)}
 const t=k=>(T[S.lang]&&T[S.lang][k])||T.ms[k]||k;
 function applyLang(){document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.l===S.lang));$('nameInp').placeholder=S.lang==='ms'?'Nama anda':'Your name'}
-function setLang(l){S.lang=l;LS.set('settings',S);applyLang();refreshHome()}
+function setLang(l){S.lang=l;LS.set('settings',S);applyLang();refreshHome();buildKBs()}
 function toggleSet(k){S[k]=!S[k];LS.set('settings',S);refreshSet();if(k==='hl')render()}
 function refreshSet(){$('tSound').classList.toggle('on',S.sound);$('tVib').classList.toggle('on',S.vib);$('tHl').classList.toggle('on',S.hl);$('sName').textContent=ME.name||'—';
  $('myStats').innerHTML=`<div><b>${ME.games}</b><span>${t('games')}</span></div><div><b>${ME.solved}</b><span>${t('solvedN')}</span></div><div><b>${ME.wins}-${ME.losses}</b><span>W-L</span></div><div><b>${ME.rating}</b><span>${t('rating')}</span></div><div><b>${ME.points}</b><span>${t('points')}</span></div><div><b>${ME.best.easy?fmt(ME.best.easy):'—'}</b><span>${t('best')} (${t('easy')})</span></div>`}
@@ -357,8 +376,8 @@ const fmt=s=>{s=Math.floor(s);const m=Math.floor(s/60);return String(m).padStart
 function refreshHome(){$('hName').textContent=ME.name||'Pemain';$('hAv').textContent=(ME.name||'?')[0].toUpperCase();$('hAv').style.background=avColor(ME.name);
  $('hStat').textContent=`${ME.solved} ${t('solvedN').toLowerCase()} · ${ME.wins}W ${ME.losses}L · ${ME.points} ${t('points').toLowerCase()}`;$('hRating').textContent='⭐ '+ME.rating;
  $('btnResume').style.display=LS.get('save',null)?'flex':'none'}
-function askName(){$('nameInp').value=ME.name||'';openM('mName');setTimeout(()=>$('nameInp').focus(),200)}
-function saveName(){const n=$('nameInp').value.trim().replace(/\s+/g,' ').slice(0,14);if(!n){$('nameInp').focus();return}ME.name=n;LS.set('me',ME);closeM('mName');refreshHome();refreshSet();pushProfile();toast(t('saved')+' ✓')}
+function askName(){$('nameInp').value=ME.name||'';openM('mName')}
+function saveName(){const n=$('nameInp').value.trim().replace(/\s+/g,' ').slice(0,14);if(!n){toast('✏️');return}ME.name=n;LS.set('me',ME);closeM('mName');refreshHome();refreshSet();pushProfile();toast(t('saved')+' ✓')}
 
 /* ============ Sound & haptics ============ */
 let AC;function beep(f=600,d=.08,type='sine',v=.08){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
@@ -426,7 +445,7 @@ function render(){if(!G)return;const cells=$('board').querySelectorAll('.cell');
   if(v)c.textContent=v;else if(G.notes[i]){let h='<div class="notes">';for(let n=1;n<=9;n++)h+=`<b>${G.notes[i]&(1<<n)?n:''}</b>`;c.innerHTML=h+'</div>'}else c.textContent='';
   delete c.dataset.fx});
  document.querySelectorAll('.num').forEach(b=>{const n=+b.dataset.n;b.classList.toggle('done',cnt[n]>=9);b.querySelector('small').textContent=9-cnt[n]});
- $('gMist').textContent='❤️'.repeat(Math.max(0,3-G.mist))+'🖤'.repeat(Math.min(3,G.mist));$('gScore').textContent=G.score;$('hintN').textContent=G.hints;$('gTime').textContent=fmt(G.time)}
+ $('gMist').textContent=G.mist;$('gMist').style.color=G.mist?'var(--bad)':'';$('gScore').textContent=G.score;$('hintN').textContent=G.hints;$('gTime').textContent=fmt(G.time)}
 function select(i){if(!G||G.over||G.paused)return;G.sel=i;sfx.tap();render()}
 function fxCell(i,cls){const c=$('board').children[i];if(c)c.dataset.fx=cls}
 function input(n){if(!G||G.over||G.paused||G.sel<0)return;const i=G.sel;if(G.puzzle[i])return;
@@ -439,7 +458,6 @@ function input(n){if(!G||G.over||G.paused||G.sel<0)return;const i=G.sel;if(G.puz
   fxCell(i,'pop');sfx.ok();vib(15);checkUnits(i);sendProgress()}
  else{G.combo=0;G.mist++;G.score=Math.max(0,G.score-DIFF[G.diff].base/5|0);sfx.bad();vib([60,40,60]);sendMistake()}
  render();
- if(G.mist>=3)return setTimeout(()=>G.mode==='solo'?endSolo(false):endOnline('mist'),450);
  if(isSolved())setTimeout(()=>G.mode==='solo'?endSolo(true):endOnline('solved'),350)}
 function checkUnits(i){const r=(i/9)|0,c=i%9,b=BOX(i);const units=[[...Array(9)].map((_,k)=>r*9+k),[...Array(9)].map((_,k)=>k*9+c),[...Array(81).keys()].filter(k=>BOX(k)===b)];let any=false;
  for(const u of units)if(u.every(k=>G.board[k]===G.solution[k])){any=true;u.forEach((k,idx)=>setTimeout(()=>{const el=$('board').children[k];el.classList.remove('wave');void el.offsetWidth;el.classList.add('wave')},idx*35));G.score+=DIFF[G.diff].base/4|0}
@@ -460,7 +478,7 @@ document.addEventListener('keydown',e=>{if(!G||!$('sGame').classList.contains('o
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&G&&G.mode==='solo'&&!G.over&&!G.paused){togglePause();saveSolo()}});
 
 /* ============ End screens ============ */
-function finalScore(){const d=DIFF[G.diff];const tb=Math.max(0,Math.round(d.base*2*(1-G.time/d.limit)));return G.score+tb+(3-G.mist)*d.base/4}
+function finalScore(){const d=DIFF[G.diff];const tb=Math.max(0,Math.round(d.base*2*(1-G.time/d.limit)));return G.score+tb+Math.max(0,3-G.mist)*d.base/4}
 function endSolo(ok){G.over=true;clearInterval(timerI);LS.set('save',null);ME.games++;let sc=0;
  if(ok){sc=Math.round(finalScore());G.score=sc;ME.solved++;ME.points+=sc;if(!ME.best[G.diff]||G.time<ME.best[G.diff])ME.best[G.diff]=G.time;sfx.win();vib([30,50,30,50,80]);confetti()}else sfx.lose();
  LS.set('me',ME);pushProfile();
@@ -520,7 +538,7 @@ async function createRoom(diff){if(!needOnline())return;const code=Array.from({l
  showWait(t('roomMade'),t('waitFriend'),code);
  try{const ref=db.collection('matches').doc();waitDoc=ref;await ref.set({status:'room',code,diff,seed:Math.floor(Math.random()*2147483646)+1,p1:myInfo(),p2:null,ts:Date.now(),p1prog:0,p2prog:0,p1mist:0,p2mist:0,winner:null,reason:null});listenWait(ref)}
  catch(e){closeM('mWait');toast('⚠️ '+(e.message||e))}}
-function joinRoomAsk(){if(!needOnline())return;$('codeInp').value='';openM('mJoin');setTimeout(()=>$('codeInp').focus(),200)}
+function joinRoomAsk(){if(!needOnline())return;$('codeInp').value='';openM('mJoin')}
 async function joinRoom(){const code=$('codeInp').value.trim().toUpperCase();if(code.length!==5)return;
  try{const q=await db.collection('matches').where('code','==',code).where('status','==','room').limit(1).get();if(q.empty)return toast(t('badCode'));
   const d=q.docs[0];if(d.data().p1.uid===ME.fid)return toast(t('badCode'));
@@ -592,7 +610,20 @@ function handleBack(){
 applyLang();refreshHome();refreshSet();initFB();
 if(!ME.name)setTimeout(askName,600);
 addEventListener('online',()=>{if(auth&&auth.currentUser)setNet(true);else initFB()});addEventListener('offline',()=>setNet(false));
-$('nameInp').addEventListener('keydown',e=>{if(e.key==='Enter')saveName()});$('codeInp').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom()});
+/* In-app keyboard (tiada keyboard telefon) */
+function buildKB(box,inp,mode){const rows=mode==='code'?['1234567890','QWERTYUP','ASDFGHJKLZ','XCVBNM']:['1234567890','QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+ const okLbl=mode==='code'?t('join'):t('save');
+ box.innerHTML=rows.map((r,i)=>'<div class="r">'+[...r].map(c=>`<button data-k="${c}">${c}</button>`).join('')+(i===rows.length-1?'<button class="w" data-k="DEL">⌫</button>':'')+'</div>').join('')
+  +'<div class="r">'+(mode==='name'?`<button class="sp" data-k=" ">␣</button>`:'')+`<button class="ok" data-k="OK">${okLbl}</button></div>`;
+ box.querySelectorAll('button').forEach(b=>b.onclick=()=>kbPress(inp,mode,b.dataset.k))}
+function kbPress(inp,mode,k){sfx.tap();vib(8);const max=+inp.maxLength||14;let v=inp.value;
+ if(k==='OK')return mode==='code'?joinRoom():saveName();
+ if(k==='DEL')v=v.slice(0,-1);else if(v.length<max){if(k===' '){if(v&&!v.endsWith(' '))v+=' '}else{const ch=mode==='code'?k:((!v||v.endsWith(' '))?k.toUpperCase():k.toLowerCase());v+=ch}}
+ inp.value=v}
+function buildKBs(){buildKB($('kbName'),$('nameInp'),'name');buildKB($('kbCode'),$('codeInp'),'code')}
+buildKBs();
+document.addEventListener('keydown',e=>{const m=document.querySelector('.modal.on');if(!m||(m.id!=='mName'&&m.id!=='mJoin'))return;const inp=m.id==='mName'?$('nameInp'):$('codeInp'),mode=m.id==='mName'?'name':'code';
+ if(e.key==='Enter')kbPress(inp,mode,'OK');else if(e.key==='Backspace')kbPress(inp,mode,'DEL');else if(e.key===' ')kbPress(inp,mode,' ');else if(/^[a-z0-9]$/i.test(e.key))kbPress(inp,mode,e.key.toUpperCase());else return;e.preventDefault()});
 </script>
 </body>
 </html>
