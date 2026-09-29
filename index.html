@@ -306,7 +306,7 @@ input.inp:focus{border-color:var(--c2)}
 </div></div>
 
 <div class="modal" id="mConfirm"><div class="sheet">
-  <div class="big">🚪</div><h2 id="cTitle">Keluar?</h2><p id="cSub"></p>
+  <div class="big" id="cIcon">🚪</div><h2 id="cTitle">Keluar?</h2><p id="cSub"></p>
   <div class="row2"><button class="btn" onclick="closeM('mConfirm')" data-t="no">Tidak</button><button class="btn pri" id="cYes" data-t="yes">Ya</button></div>
 </div></div>
 
@@ -328,9 +328,9 @@ const firebaseConfig = {
 /* ============ i18n ============ */
 const T={
  ms:{solo:'Main Solo',online:'Lawan Online 1v1',rank:'Ranking',set:'Tetapan',resume:'Sambung Permainan',time:'Masa',mist:'Silap',score:'Markah',paused:'Dijeda',undo:'Undur',erase:'Padam',notes:'Nota',hint:'Petunjuk',points:'Mata',wins:'Menang',name:'Nama pemain',lang:'Bahasa',sound:'Bunyi',vib:'Getaran',hl:'Serlah nombor sama',mystats:'Statistik saya',cancel:'Batal',onlineSub:'Puzzle sama untuk kedua-dua pemain. Siapa siap dulu, menang!',quick:'Cari Lawan Rawak',mkroom:'Buat Bilik (Kawan)',joinroom:'Masuk Bilik Guna Kod',bot:'Lawan Bot',hello:'Selamat datang!',nameSub:'Masukkan nama untuk ranking & lawan online',save:'Simpan',codeSub:'Minta kod 5 huruf daripada kawan anda',join:'Masuk',again:'Main Lagi',home:'Menu Utama',no:'Tidak',yes:'Ya',
-  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'Mod online belum disediakan (Firebase). Hanya solo tersedia.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!'},
+  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'Mod online belum disediakan (Firebase). Hanya solo tersedia.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
  en:{solo:'Play Solo',online:'Online 1v1 Battle',rank:'Ranking',set:'Settings',resume:'Resume Game',time:'Time',mist:'Mistakes',score:'Score',paused:'Paused',undo:'Undo',erase:'Erase',notes:'Notes',hint:'Hint',points:'Points',wins:'Wins',name:'Player name',lang:'Language',sound:'Sound',vib:'Vibration',hl:'Highlight same numbers',mystats:'My stats',cancel:'Cancel',onlineSub:'Same puzzle for both players. First to finish wins!',quick:'Find Random Opponent',mkroom:'Create Room (Friend)',joinroom:'Join Room with Code',bot:'Play vs Bot',hello:'Welcome!',nameSub:'Enter a name for ranking & online play',save:'Save',codeSub:'Ask your friend for the 5-letter code',join:'Join',again:'Play Again',home:'Main Menu',no:'No',yes:'Yes',
-  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'Online mode not set up yet (Firebase). Solo only.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!'}
+  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'Online mode not set up yet (Firebase). Solo only.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
 };
 const $=id=>document.getElementById(id);
 const LS={get(k,d){try{const v=localStorage.getItem('psd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('psd_'+k,JSON.stringify(v))}catch(e){}}};
@@ -468,7 +468,7 @@ function endSolo(ok){G.over=true;clearInterval(timerI);LS.set('save',null);ME.ga
  $('eAgain').onclick=againGame;openM('mEnd')}
 function againGame(){closeM('mEnd');if(!G)return;if(G.mode==='solo')newGame(G.diff,Date.now()%2147483647,'solo');else openDiff(G.mode==='bot'?'match':G.mode==='room'?'room':'match')}
 function leaveGame(){if(!G||G.over){show('sHome');return}
- $('cTitle').textContent=t('leave');$('cSub').textContent=G.mode==='solo'?t('leaveSub'):t('leaveOn');
+ $('cIcon').textContent='🚪';$('cTitle').textContent=t('leave');$('cSub').textContent=G.mode==='solo'?t('leaveSub'):t('leaveOn');
  $('cYes').onclick=()=>{closeM('mConfirm');if(G.mode==='solo'){saveSolo();G.over=true;clearInterval(timerI);show('sHome')}else{endOnline('forfeit')}};openM('mConfirm')}
 
 /* ============ Difficulty picker ============ */
@@ -561,6 +561,21 @@ async function loadRank(){const L=$('rankList'),P=$('podium');P.innerHTML='';
   L.innerHTML=rows.map((r,i)=>`<div class="lb${r.id===ME.fid?' me':''}"><div class="rk ${i<3?'r'+(i+1):''}">${i+1}</div><div class="av" style="background:${avColor(r.name)}">${esc(r.name[0].toUpperCase())}</div><div class="nm">${esc(r.name)}<small>${r.wins||0}W ${r.losses||0}L · ${r.solved||0} ${t('solvedN').toLowerCase()}</small></div><div class="sc">${r[rankKey]||0} ${sfxk}</div></div>`).join('');
   const mine=rows.findIndex(r=>r.id===ME.fid);if(mine<0&&ME.name)L.innerHTML+=`<div class="lb me"><div class="rk">50+</div><div class="av" style="background:${avColor(ME.name)}">${esc(ME.name[0].toUpperCase())}</div><div class="nm">${esc(ME.name)}</div><div class="sc">${ME[rankKey]} ${sfxk}</div></div>`;
  }catch(e){L.innerHTML=`<div class="empty">⚠️ ${esc(e.message||e)}</div>`}}
+
+
+/* ============ Back button (Android) ============ */
+function exitApp(){try{const A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(A)return A.exitApp()}catch(e){}try{navigator.app&&navigator.app.exitApp()}catch(e){}window.close()}
+function askExit(){$('cIcon').textContent='👋';$('cTitle').textContent=t('exitApp');$('cSub').textContent=t('exitSub');$('cYes').onclick=()=>{closeM('mConfirm');if(G&&G.mode==='solo'&&!G.over)saveSolo();exitApp()};openM('mConfirm')}
+function handleBack(){
+ const m=document.querySelector('.modal.on');
+ if(m){if(m.id==='mWait')cancelWait();else if(m.id==='mEnd'){closeM('mEnd');show('sHome')}else if(m.id==='mName'&&!ME.name)askExit();else closeM(m.id);return}
+ const scr=document.querySelector('.screen.on').id;
+ if(scr==='sGame'){leaveGame();return}
+ if(scr!=='sHome'){show('sHome');return}
+ askExit()}
+(function(){let native=false;try{const A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(A&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){A.addListener('backButton',handleBack);native=true}}catch(e){}
+ document.addEventListener('backbutton',e=>{e.preventDefault();handleBack()},false);
+ if(!native){try{history.pushState({ps:1},'');addEventListener('popstate',()=>{history.pushState({ps:1},'');handleBack()})}catch(e){}}})();
 
 /* ============ Boot ============ */
 applyLang();refreshHome();refreshSet();initFB();
