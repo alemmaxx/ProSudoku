@@ -2,19 +2,20 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Tetapan app (musim ranking)
-    match /config/{doc} {
-      allow read: if true;
-      // Reset ranking dari app: mesti tulis dokumen resets/<password>-<musim> dalam batch yang sama
-      allow create, update: if request.auth != null && doc == 'app'
-                            && request.resource.data.season is int
-                            && existsAfter(/databases/$(database)/documents/resets/$('prokuiz2026-' + string(request.resource.data.season)));
-    }
+    // ===== PASSWORD ADMIN (padam ranking) =====
+    // Tukar password: ubah 'prokuiz2026' di bawah (SATU tempat sahaja), kemudian Publish.
+    function adminPassword() { return 'prokuiz2026'; }
 
-    // Log reset. Password admin hanya ada di sini (rules), bukan dalam kod app.
-    match /resets/{id} {
-      allow read: if false;
-      allow create: if request.auth != null && id.matches('prokuiz2026-[0-9]+');
+    // Tetapan app (musim ranking)
+    match /config/{docId} {
+      allow read: if true;
+      allow create, update: if request.auth != null && docId == 'app' && (
+            // Reset ranking: mesti hantar password yang betul
+            (request.resource.data.key == adminPassword() && request.resource.data.season is int)
+            // Selepas reset, app buang password dari dokumen (musim tak berubah)
+         || (resource != null && !('key' in request.resource.data)
+             && request.resource.data.season == resource.data.season)
+      );
     }
 
     // Profil & ranking pemain — semua boleh baca, hanya pemilik boleh tulis
