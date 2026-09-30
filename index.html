@@ -53,6 +53,22 @@ button{font-family:inherit;color:inherit;border:none;background:none;cursor:poin
 .iconbtn:active{transform:scale(.92)}
 .spacer{width:44px;height:44px}
 .homeTop{display:flex;justify-content:flex-end}
+.onCnt{margin-left:4px;padding:3px 9px;border-radius:99px;background:rgba(5,46,22,.35);font-size:12px;font-weight:800;display:none}
+.onCnt.on{display:inline-block}
+.olHead{display:flex;align-items:center;gap:4px;font-weight:700;font-size:14px;margin:-4px 0 8px;justify-content:center}
+.olHead b{color:var(--ok)}
+.olList{max-height:34vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;text-align:left}
+.olRow{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.olRow .av{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:900;flex:none;position:relative}
+.olRow .av::after{content:'';position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;background:var(--ok);border:2px solid #1d1645}
+.olRow.busy .av::after{background:var(--gold)}
+.olRow .nm{flex:1;min-width:0;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.olRow .nm small{display:block;font-weight:500;font-size:11px;color:var(--mut)}
+.olRow button{padding:8px 12px;border-radius:12px;font-weight:800;font-size:13px;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#2a1600;flex:none}
+.olRow button:disabled{background:rgba(255,255,255,.1);color:var(--mut)}
+.olEmpty{text-align:center;color:var(--mut);font-size:13px;padding:14px 8px;border-radius:14px;background:rgba(255,255,255,.04)}
+.invBar{height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin:-4px 0 16px}
+.invBar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#f59e0b,var(--c3));transition:width 1s linear}
 .setScroll{flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;padding-bottom:4px}
 .iosCard{flex-direction:column;align-items:stretch;gap:10px}
 .iosHead{font-weight:800;font-size:16px}
@@ -221,7 +237,7 @@ input.inp:focus{border-color:var(--c2)}
     <div class="upd" id="updBar" onclick="openUpdate()">🚀 <span id="updTxt"></span><b data-t="updNow">Kemas Kini</b></div>
     <div class="menu">
       <button class="btn pri" onclick="openDiff('solo')"><span class="ico">🧩</span><span data-t="solo">Main Solo</span></button>
-      <button class="btn gold" onclick="openOnline()"><span class="ico">⚔️</span><span data-t="online">Lawan Online 1v1</span></button>
+      <button class="btn gold" onclick="openOnline()"><span class="ico">⚔️</span><span data-t="online">Lawan Online 1v1</span><span class="onCnt" id="onCnt"></span></button>
       <div class="row2">
         <button class="btn" onclick="openRank()"><span class="ico">🏆</span><span data-t="rank">Ranking</span></button>
         <button class="btn" onclick="show('sSet')"><span class="ico">⚙️</span><span data-t="set">Tetapan</span></button>
@@ -314,11 +330,13 @@ input.inp:focus{border-color:var(--c2)}
 <div class="modal" id="mOnline"><div class="sheet">
   <h2>⚔️ <span data-t="online">Lawan Online 1v1</span></h2>
   <p data-t="onlineSub">Puzzle sama untuk kedua-dua pemain. Siapa siap dulu, menang!</p>
+  <div class="olHead"><span class="netdot on"></span><span data-t="whoOnline">Pemain online</span> <b id="olN">0</b></div>
+  <div class="olList" id="olList"></div>
   <div class="stack">
     <button class="btn gold" onclick="closeM('mOnline');openDiff('match')"><span class="ico">🎲</span><span data-t="quick">Cari Lawan Rawak</span></button>
     <button class="btn pri" onclick="closeM('mOnline');openDiff('room')"><span class="ico">🔑</span><span data-t="mkroom">Buat Bilik (Kawan)</span></button>
     <button class="btn" onclick="closeM('mOnline');joinRoomAsk()"><span class="ico">🚪</span><span data-t="joinroom">Masuk Bilik Guna Kod</span></button>
-    <button class="btn" onclick="closeM('mOnline')" data-t="cancel">Batal</button>
+    <button class="btn" onclick="closeOnline()" data-t="cancel">Batal</button>
   </div>
 </div></div>
 
@@ -383,6 +401,12 @@ input.inp:focus{border-color:var(--c2)}
   <p id="updSub"></p>
   <div class="stack"><button class="btn pri" onclick="doUpdate()" data-t="updNow">Kemas Kini</button><button class="btn" onclick="closeM('mUpd')" data-t="later">Nanti</button></div>
 </div></div>
+<div class="modal" id="mInvite"><div class="sheet">
+  <div class="big">⚔️</div><h2 data-t="invTitle">Ajakan Lawan!</h2>
+  <p id="invSub"></p>
+  <div class="invBar"><i id="invBar"></i></div>
+  <div class="row2"><button class="btn" onclick="replyInvite(false)" data-t="decline">Tolak</button><button class="btn gold" onclick="replyInvite(true)" data-t="accept">Terima</button></div>
+</div></div>
 <div id="toast"></div>
 
 <script>
@@ -401,9 +425,9 @@ const firebaseConfig = {
 /* ============ i18n ============ */
 const T={
  ms:{solo:'Main Solo',online:'Lawan Online 1v1',rank:'Ranking',set:'Tetapan',resume:'Sambung Permainan',time:'Masa',mist:'Silap',score:'Markah',paused:'Dijeda',undo:'Undur',erase:'Padam',notes:'Nota',hint:'Petunjuk',points:'Mata',wins:'Menang',name:'Nama pemain',lang:'Bahasa',sound:'Bunyi',vib:'Getaran',hl:'Serlah nombor sama',mystats:'Statistik saya',cancel:'Batal',onlineSub:'Puzzle sama untuk kedua-dua pemain. Siapa siap dulu, menang!',quick:'Cari Lawan Rawak',mkroom:'Buat Bilik (Kawan)',joinroom:'Masuk Bilik Guna Kod',bot:'Lawan Bot',hello:'Selamat datang!',nameSub:'Masukkan nama untuk ranking & lawan online',save:'Simpan',codeSub:'Minta kod 5 huruf daripada kawan anda',join:'Masuk',again:'Main Lagi',home:'Menu Utama',no:'Tidak',yes:'Ya',
-  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',pwHint:'Huruf kecil & nombor sahaja',rulesOld:'Firestore Rules belum dikemas kini (Publish rules baru)',iosTitle:'Pasang di iPhone / iPad',copyLink:'Salin Link',shareLink:'Kongsi',qrSub:'Imbas dengan kamera iPhone',ios1:'Buka link dalam Safari (bukan Chrome)',ios2:'Tekan butang Share ⬆️ di bawah skrin',ios3:'Pilih "Add to Home Screen" → Add',ios4:'Buka ProSudoku dari ikon di skrin utama',copied:'Link disalin ✓ Tampal dalam Safari',shareTxt:'Jom main ProSudoku! Buka dalam Safari:',resetTitle:'Padam Ranking',resetSub:'Semua ranking, rating & mata pemain akan direset. Masukkan password admin.',resetBtn:'Padam',resetOk:'Ranking berjaya dipadam ✓',resetBad:'Password salah',version:'Versi',checkUpd:'Semak Kemas Kini',updNow:'Kemas Kini',later:'Nanti',updTitle:'Versi baru tersedia!',updSub:'Versi {v} sedia untuk dimuat turun. Semua data, markah & ranking anda kekal selamat.',updBar:'Versi baru {v} tersedia',updLatest:'Anda guna versi terkini ✓',updFail:'Tak dapat semak kemas kini',updDl:'Memuat turun… buka fail APK untuk pasang',emptyCells:'petak kosong',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
+  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',whoOnline:'Pemain online',invite:'Ajak',busy:'Sedang main',noOnline:'Tiada pemain lain online sekarang. Cuba Cari Lawan Rawak atau Buat Bilik.',invTitle:'Ajakan Lawan!',invSub:'{n} (⭐{r}) ajak anda main 1v1 tahap {d}.',accept:'Terima',decline:'Tolak',invWait:'Menunggu {n} terima…',invWaitSub:'Ajakan tamat dalam 30 saat',invDeclined:'{n} menolak ajakan',invExpired:'Tiada jawapan daripada {n}',invGone:'Ajakan sudah tamat',pwHint:'Huruf kecil & nombor sahaja',rulesOld:'Firestore Rules belum dikemas kini (Publish rules baru)',iosTitle:'Pasang di iPhone / iPad',copyLink:'Salin Link',shareLink:'Kongsi',qrSub:'Imbas dengan kamera iPhone',ios1:'Buka link dalam Safari (bukan Chrome)',ios2:'Tekan butang Share ⬆️ di bawah skrin',ios3:'Pilih "Add to Home Screen" → Add',ios4:'Buka ProSudoku dari ikon di skrin utama',copied:'Link disalin ✓ Tampal dalam Safari',shareTxt:'Jom main ProSudoku! Buka dalam Safari:',resetTitle:'Padam Ranking',resetSub:'Semua ranking, rating & mata pemain akan direset. Masukkan password admin.',resetBtn:'Padam',resetOk:'Ranking berjaya dipadam ✓',resetBad:'Password salah',version:'Versi',checkUpd:'Semak Kemas Kini',updNow:'Kemas Kini',later:'Nanti',updTitle:'Versi baru tersedia!',updSub:'Versi {v} sedia untuk dimuat turun. Semua data, markah & ranking anda kekal selamat.',updBar:'Versi baru {v} tersedia',updLatest:'Anda guna versi terkini ✓',updFail:'Tak dapat semak kemas kini',updDl:'Memuat turun… buka fail APK untuk pasang',emptyCells:'petak kosong',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
  en:{solo:'Play Solo',online:'Online 1v1 Battle',rank:'Ranking',set:'Settings',resume:'Resume Game',time:'Time',mist:'Mistakes',score:'Score',paused:'Paused',undo:'Undo',erase:'Erase',notes:'Notes',hint:'Hint',points:'Points',wins:'Wins',name:'Player name',lang:'Language',sound:'Sound',vib:'Vibration',hl:'Highlight same numbers',mystats:'My stats',cancel:'Cancel',onlineSub:'Same puzzle for both players. First to finish wins!',quick:'Find Random Opponent',mkroom:'Create Room (Friend)',joinroom:'Join Room with Code',bot:'Play vs Bot',hello:'Welcome!',nameSub:'Enter a name for ranking & online play',save:'Save',codeSub:'Ask your friend for the 5-letter code',join:'Join',again:'Play Again',home:'Main Menu',no:'No',yes:'Yes',
-  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',pwHint:'Lowercase letters & numbers only',rulesOld:'Firestore Rules not updated (publish the new rules)',iosTitle:'Install on iPhone / iPad',copyLink:'Copy Link',shareLink:'Share',qrSub:'Scan with iPhone camera',ios1:'Open the link in Safari (not Chrome)',ios2:'Tap the Share button ⬆️ at the bottom',ios3:'Choose "Add to Home Screen" → Add',ios4:'Open ProSudoku from the home screen icon',copied:'Link copied ✓ Paste it in Safari',shareTxt:'Play ProSudoku! Open in Safari:',resetTitle:'Delete Ranking',resetSub:'All rankings, ratings & points will be reset. Enter the admin password.',resetBtn:'Delete',resetOk:'Ranking deleted ✓',resetBad:'Wrong password',version:'Version',checkUpd:'Check for Update',updNow:'Update',later:'Later',updTitle:'New version available!',updSub:'Version {v} is ready to download. All your data, scores & ranking stay safe.',updBar:'New version {v} available',updLatest:'You are on the latest version ✓',updFail:'Could not check for updates',updDl:'Downloading… open the APK file to install',emptyCells:'empty cells',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
+  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',whoOnline:'Players online',invite:'Invite',busy:'In a game',noOnline:'No other players online right now. Try Find Random Opponent or Create Room.',invTitle:'Battle Invite!',invSub:'{n} (⭐{r}) invites you to a 1v1 on {d}.',accept:'Accept',decline:'Decline',invWait:'Waiting for {n} to accept…',invWaitSub:'Invite expires in 30 seconds',invDeclined:'{n} declined your invite',invExpired:'No response from {n}',invGone:'Invite has expired',pwHint:'Lowercase letters & numbers only',rulesOld:'Firestore Rules not updated (publish the new rules)',iosTitle:'Install on iPhone / iPad',copyLink:'Copy Link',shareLink:'Share',qrSub:'Scan with iPhone camera',ios1:'Open the link in Safari (not Chrome)',ios2:'Tap the Share button ⬆️ at the bottom',ios3:'Choose "Add to Home Screen" → Add',ios4:'Open ProSudoku from the home screen icon',copied:'Link copied ✓ Paste it in Safari',shareTxt:'Play ProSudoku! Open in Safari:',resetTitle:'Delete Ranking',resetSub:'All rankings, ratings & points will be reset. Enter the admin password.',resetBtn:'Delete',resetOk:'Ranking deleted ✓',resetBad:'Wrong password',version:'Version',checkUpd:'Check for Update',updNow:'Update',later:'Later',updTitle:'New version available!',updSub:'Version {v} is ready to download. All your data, scores & ranking stay safe.',updBar:'New version {v} available',updLatest:'You are on the latest version ✓',updFail:'Could not check for updates',updDl:'Downloading… open the APK file to install',emptyCells:'empty cells',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
 };
 const $=id=>document.getElementById(id);
 const LS={get(k,d){try{const v=localStorage.getItem('psd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('psd_'+k,JSON.stringify(v))}catch(e){}}};
@@ -412,7 +436,7 @@ let ME=LS.get('me',null);
 if(!ME){ME={uid:'L'+Math.random().toString(36).slice(2,12),name:'',rating:1000,points:0,wins:0,losses:0,games:0,solved:0,best:{}};LS.set('me',ME)}
 const t=k=>(T[S.lang]&&T[S.lang][k])||T.ms[k]||k;
 function applyLang(){document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.l===S.lang));$('nameInp').placeholder=S.lang==='ms'?'Nama anda':'Your name'}
-function setLang(l){S.lang=l;LS.set('settings',S);applyLang();refreshHome();buildKBs();if(typeof updInfo!=='undefined'&&updInfo)$('updTxt').textContent=t('updBar').replace('{v}',verLabel(updInfo.n))}
+function setLang(l){S.lang=l;LS.set('settings',S);applyLang();refreshHome();buildKBs();if(olUnsub)renderOnline();if(typeof updInfo!=='undefined'&&updInfo)$('updTxt').textContent=t('updBar').replace('{v}',verLabel(updInfo.n))}
 function toggleSet(k){S[k]=!S[k];LS.set('settings',S);refreshSet();if(k==='hl')render()}
 function refreshSet(){$('tSound').classList.toggle('on',S.sound);$('tVib').classList.toggle('on',S.vib);$('tHl').classList.toggle('on',S.hl);$('sName').textContent=ME.name||'—';
  $('myStats').innerHTML=`<div><b>${ME.games}</b><span>${t('games')}</span></div><div><b>${ME.solved}</b><span>${t('solvedN')}</span></div><div><b>${ME.wins}-${ME.losses}</b><span>W-L</span></div><div><b>${ME.rating}</b><span>${t('rating')}</span></div><div><b>${ME.points}</b><span>${t('points')}</span></div><div><b>${ME.best.easy?fmt(ME.best.easy):'—'}</b><span>${t('best')} (${t('easy')})</span></div>`}
@@ -548,7 +572,7 @@ let pickMode='solo';
 function openDiff(mode){pickMode=mode;$('dTitle').textContent=t('pickDiff');$('dSub').textContent=t('diffSub');
  $('dList').innerHTML=Object.entries(DIFF).map(([k,d])=>`<button class="diff" onclick="pickDiff('${k}')"><span class="d" style="background:${d.col}33">${d.ic}</span><span>${t(k)}<small>${81-d.clues} ${t('emptyCells')} · ${d.base} pts${ME.best[k]?' · 🏅 '+fmt(ME.best[k]):''}</small></span></button>`).join('');
  openM('mDiff')}
-function pickDiff(d){closeM('mDiff');if(pickMode==='solo'){if(!ME.name)return askName();newGame(d,Date.now()%2147483647,'solo')}else if(pickMode==='match')findMatch(d);else createRoom(d)}
+function pickDiff(d){closeM('mDiff');if(pickMode==='invite')return sendInvite(d);if(pickMode==='solo'){if(!ME.name)return askName();newGame(d,Date.now()%2147483647,'solo')}else if(pickMode==='match')findMatch(d);else createRoom(d)}
 
 /* ============ Firebase / Online ============ */
 let db=null,auth=null,online=false,unsubMatch=null,waitDoc=null,botTimer=null,waitTimer=null;
@@ -561,7 +585,7 @@ function setNet(on){online=on;$('netDot').classList.toggle('on',on);$('netTxt').
 async function initFB(){if(!CFG_OK){setNet(false);return}
  try{await loadSDK()}catch(e){fbErr='SDK';setNet(false);return}
  try{if(!fbInit){firebase.initializeApp(firebaseConfig);fbInit=true;auth=firebase.auth();db=firebase.firestore();
-   auth.onAuthStateChanged(u=>{if(u){fbErr='';if(!ME.fid||ME.fid!==u.uid){ME.fid=u.uid;LS.set('me',ME)}setNet(true);pullProfile()}else setNet(false)})}
+   auth.onAuthStateChanged(u=>{if(u){fbErr='';if(!ME.fid||ME.fid!==u.uid){ME.fid=u.uid;LS.set('me',ME)}setNet(true);pullProfile();startPresence();listenInvites()}else setNet(false)})}
   if(!auth.currentUser)await auth.signInAnonymously()}catch(e){console.warn('FB',e);fbErr=(e&&(e.code||e.message))||'auth';setNet(false)}}
 function needOnline(){
  if(!CFG_OK){toast(t('noNet'));return false}
@@ -577,7 +601,8 @@ async function pullProfile(){try{
   const d=await db.collection('players').doc(ME.fid).get();if(d.exists&&(parseInt(d.data().season)||1)===SEASON){const x=d.data();
   ['rating','wins','losses'].forEach(k=>{if(typeof x[k]==='number')ME[k]=x[k]});ME.points=Math.max(ME.points,x.points||0);ME.solved=Math.max(ME.solved,x.solved||0);LS.set('me',ME);refreshHome()}pushProfile()}catch(e){console.warn(e)}}
 function pushProfile(){if(!db||!ME.fid||!ME.name)return;db.collection('players').doc(ME.fid).set({name:ME.name,rating:ME.rating,points:ME.points,wins:ME.wins,losses:ME.losses,solved:ME.solved,games:ME.games,season:SEASON,updated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>console.warn(e))}
-function openOnline(){if(!needOnline())return;openM('mOnline')}
+function openOnline(){if(!needOnline())return;openM('mOnline');watchOnline(true)}
+function closeOnline(){watchOnline(false);closeM('mOnline')}
 function myInfo(){return{uid:ME.fid,name:ME.name,rating:ME.rating}}
 function showWait(title,sub,code){$('wTitle').textContent=title;$('wSub').textContent=sub;$('wCode').style.display=code?'block':'none';$('wCode').textContent=code||'';$('wBot').style.display='none';openM('mWait')}
 
@@ -602,9 +627,9 @@ async function joinRoom(){const code=$('codeInp').value.trim().toUpperCase();if(
   const d=q.docs[0];if(d.data().p1.uid===ME.fid)return toast(t('badCode'));
   const ok=await db.runTransaction(async tx=>{const s=await tx.get(d.ref);if(s.data().status!=='room')return false;tx.update(d.ref,{status:'playing',p2:myInfo(),startTs:Date.now()});return true});
   if(!ok)return toast(t('badCode'));closeM('mJoin');startOnline(d.id,'p2',(await d.ref.get()).data())}catch(e){toast('⚠️ '+(e.message||e))}}
-async function cancelWait(){closeM('mWait');clearTimeout(waitTimer);unsubMatch&&unsubMatch();unsubMatch=null;if(waitDoc){const r=waitDoc;waitDoc=null;try{await db.runTransaction(async tx=>{const s=await tx.get(r);if(s.exists&&(s.data().status==='waiting'||s.data().status==='room'))tx.delete(r)})}catch(e){}}}
+async function cancelWait(){closeM('mWait');clearTimeout(waitTimer);unsubMatch&&unsubMatch();unsubMatch=null;if(waitDoc){const r=waitDoc;waitDoc=null;try{await db.runTransaction(async tx=>{const s=await tx.get(r);if(s.exists&&['waiting','room','invite'].includes(s.data().status))tx.delete(r)})}catch(e){}}if(invOut){const iv=invOut;invOut=null;clearInterval(invOutT);iv.update({status:'cancelled'}).catch(()=>{})}}
 
-function startOnline(id,role,x){const opp=role==='p1'?x.p2:x.p1;toast('⚔️ '+t('oppFound'));vib([40,40,40]);
+function startOnline(id,role,x){watchOnline(false);closeM('mOnline');setTimeout(beat,300);const opp=role==='p1'?x.p2:x.p1;toast('⚔️ '+t('oppFound'));vib([40,40,40]);
  newGame(x.diff,x.seed,x.code?'room':'match',{matchId:id,role,oppRole:role==='p1'?'p2':'p1',oppName:opp.name,oppRating:opp.rating||1000});
  const ref=db.collection('matches').doc(id);unsubMatch&&unsubMatch();
  unsubMatch=ref.onSnapshot(s=>{if(!G||G.matchId!==id)return;const d=s.data();if(!d)return;updBars(d[G.oppRole+'prog']||0);
@@ -617,7 +642,7 @@ async function endOnline(reason){if(!G||G.over)return;
  if(G.mode==='bot'){return finishOnline(reason==='solved',reason==='solved'?'solved':reason)}
  const ref=db.collection('matches').doc(G.matchId);const winner=reason==='solved'?G.role:G.oppRole;
  try{await db.runTransaction(async tx=>{const s=await tx.get(ref);if(s.data().winner)return;tx.update(ref,{winner,reason,status:'done',[G.role+'prog']:Math.round(correctCount()*100),endTs:Date.now(),time:G.time})})}catch(e){finishOnline(reason==='solved',reason)}}
-function finishOnline(won,reason){G.over=true;clearInterval(timerI);clearInterval(botTimer);unsubMatch&&unsubMatch();unsubMatch=null;
+function finishOnline(won,reason){setTimeout(beat,300);G.over=true;clearInterval(timerI);clearInterval(botTimer);unsubMatch&&unsubMatch();unsubMatch=null;
  let dr=0;if(G.mode!=='bot'){const exp=1/(1+Math.pow(10,((G.oppRating||1000)-ME.rating)/400));dr=Math.round(32*((won?1:0)-exp));ME.rating=Math.max(0,ME.rating+dr);if(won)ME.wins++;else ME.losses++}
  ME.games++;let sc=0;if(won){sc=Math.round(finalScore()*(G.mode==='bot'?.5:1.5));ME.points+=sc;ME.solved++}
  LS.set('me',ME);pushProfile();
@@ -632,6 +657,53 @@ async function playBot(){const d=waitDoc?(await waitDoc.get()).data():null;const
  newGame(diff,Date.now()%2147483647,'bot',{oppName:'🤖 '+names[Math.floor(Math.random()*names.length)],oppRating:ME.rating,botP:0})}
 function startBot(){const secs={easy:260,med:420,hard:620,exp:900}[G.diff]*(0.8+Math.random()*0.5);clearInterval(botTimer);
  botTimer=setInterval(()=>{if(!G||G.over||G.mode!=='bot')return clearInterval(botTimer);G.botP=Math.min(100,G.botP+100/secs*(0.5+Math.random()));updBars(Math.round(G.botP));if(G.botP>=100)finishOnline(false,'solved')},1000)}
+
+/* ============ Presence: siapa online + ajak lawan ============ */
+const ONLINE_MS=75000;let presT=null,olUnsub=null,olRows=[],olTick=null,invUnsub=null,invIn=null,invInT=null,invOut=null,invOutT=null,onCntT=null;
+function myStatus(){return(G&&!G.over&&(G.mode==='match'||G.mode==='room'))?'playing':'idle'}
+function beat(){if(!db||!ME.fid||!ME.name||!online)return;db.collection('presence').doc(ME.fid).set({name:ME.name,rating:ME.rating,status:myStatus(),ts:Date.now(),season:SEASON},{merge:true}).catch(()=>{})}
+function startPresence(){clearInterval(presT);beat();presT=setInterval(()=>{if(!document.hidden)beat()},30000);
+ clearInterval(onCntT);refreshOnCnt();onCntT=setInterval(()=>{if(!document.hidden&&$('sHome').classList.contains('on'))refreshOnCnt()},45000)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)beat();else if(db&&ME.fid)db.collection('presence').doc(ME.fid).set({ts:Date.now()-ONLINE_MS+15000},{merge:true}).catch(()=>{})});
+addEventListener('pagehide',()=>{try{if(db&&ME.fid)db.collection('presence').doc(ME.fid).set({ts:0},{merge:true})}catch(e){}});
+async function refreshOnCnt(){if(!db)return;try{const q=await db.collection('presence').where('ts','>',Date.now()-ONLINE_MS).get();const n=q.docs.filter(d=>d.id!==ME.fid).length;const e=$('onCnt');e.textContent='🟢 '+n;e.classList.toggle('on',n>0)}catch(e){}}
+function watchOnline(on){if(olUnsub){olUnsub();olUnsub=null}clearInterval(olTick);if(!on||!db)return;
+ $('olList').innerHTML='<div class="olEmpty">…</div>';
+ olUnsub=db.collection('presence').where('ts','>',Date.now()-ONLINE_MS).onSnapshot(q=>{olRows=q.docs.map(d=>({id:d.id,...d.data()}));renderOnline()},e=>{$('olList').innerHTML='<div class="olEmpty">⚠️ '+esc(e.code||e.message)+'</div>'});
+ olTick=setInterval(renderOnline,10000)}
+function renderOnline(){const now=Date.now();const rows=olRows.filter(r=>r.id!==ME.fid&&r.name&&now-(r.ts||0)<ONLINE_MS).sort((a,b)=>(a.status==='playing')-(b.status==='playing')||(b.rating||0)-(a.rating||0));
+ $('olN').textContent=rows.length;const e=$('onCnt');e.textContent='🟢 '+rows.length;e.classList.toggle('on',rows.length>0);
+ $('olList').innerHTML=rows.length?rows.map(r=>{const busy=r.status==='playing';return `<div class="olRow${busy?' busy':''}"><div class="av" style="background:${avColor(r.name)}">${esc(r.name[0].toUpperCase())}</div><div class="nm">${esc(r.name)}<small>⭐ ${r.rating||1000}</small></div><button ${busy?'disabled':''} onclick="askInvite('${r.id}')">${busy?t('busy'):'⚔️ '+t('invite')}</button></div>`}).join(''):`<div class="olEmpty">${t('noOnline')}</div>`}
+let invTarget=null;
+function askInvite(uid){const r=olRows.find(x=>x.id===uid);if(!r)return;invTarget=r;watchOnline(false);closeM('mOnline');openDiff('invite')}
+async function sendInvite(diff){const r=invTarget;if(!r||!needOnline())return;
+ showWait(t('invWait').replace('{n}',r.name),t('invWaitSub'));
+ try{const mref=db.collection('matches').doc();waitDoc=mref;
+  await mref.set({status:'invite',diff,seed:Math.floor(Math.random()*2147483646)+1,p1:myInfo(),p2:null,ts:Date.now(),p1prog:0,p2prog:0,p1mist:0,p2mist:0,winner:null,reason:null,inviteTo:r.id});
+  const iref=db.collection('invites').doc();invOut=iref;
+  await iref.set({from:myInfo(),to:r.id,toName:r.name,diff,matchId:mref.id,status:'pending',ts:Date.now()});
+  listenWait(mref);
+  const un=iref.onSnapshot(s=>{const x=s.data();if(!x||invOut!==iref)return un();if(x.status==='declined'){un();toast('😔 '+t('invDeclined').replace('{n}',r.name));cancelWait()}else if(x.status==='accepted'){un();invOut=null;clearInterval(invOutT)}});
+  let left=30;clearInterval(invOutT);invOutT=setInterval(()=>{left--;if(left<=0){clearInterval(invOutT);if(invOut===iref){un();toast('⌛ '+t('invExpired').replace('{n}',r.name));cancelWait()}}},1000);
+ }catch(e){closeM('mWait');toast('⚠️ '+(e.code||e.message))}}
+function listenInvites(){if(invUnsub||!db||!ME.fid)return;
+ invUnsub=db.collection('invites').where('to','==',ME.fid).onSnapshot(q=>{q.docChanges().forEach(ch=>{const x=ch.doc.data();const fresh=Date.now()-(x.ts||0)<30000;
+  if(ch.type==='added'&&x.status==='pending'&&fresh)onInvite(ch.doc.ref,x);
+  if(ch.type==='modified'&&invIn&&invIn.ref.id===ch.doc.id&&x.status==='cancelled'){closeInvite();toast('⌛ '+t('invGone'))}})},e=>console.warn('inv',e))}
+function onInvite(ref,x){if(invIn||(G&&!G.over&&G.mode!=='solo'&&G.mode!=='bot')||document.querySelector('#mWait.on')){ref.update({status:'declined'}).catch(()=>{});return}
+ invIn={ref,x};$('invSub').textContent=t('invSub').replace('{n}',x.from.name).replace('{r}',x.from.rating||1000).replace('{d}',DIFF[x.diff].ic+' '+t(x.diff));
+ openM('mInvite');sfx.unit();vib([80,60,80,60,120]);if(G&&G.mode==='solo'&&!G.over&&!G.paused)togglePause();
+ const end=(x.ts||Date.now())+30000;const bar=$('invBar');clearInterval(invInT);
+ const upd=()=>{const l=Math.max(0,end-Date.now());bar.style.width=(l/300)+'%';if(l<=0){closeInvite();toast('⌛ '+t('invGone'))}};upd();invInT=setInterval(upd,1000)}
+function closeInvite(){clearInterval(invInT);invIn=null;closeM('mInvite')}
+async function replyInvite(ok){const iv=invIn;if(!iv)return closeInvite();closeInvite();
+ if(!ok){iv.ref.update({status:'declined'}).catch(()=>{});return}
+ try{const mref=db.collection('matches').doc(iv.x.matchId);
+  const good=await db.runTransaction(async tx=>{const s=await tx.get(mref);if(!s.exists||s.data().status!=='invite'||s.data().p2)return false;tx.update(mref,{status:'playing',p2:myInfo(),startTs:Date.now()});return true});
+  if(!good){toast('⌛ '+t('invGone'));return}
+  iv.ref.update({status:'accepted'}).catch(()=>{});
+  if(G&&G.mode==='solo'&&!G.over){saveSolo();G.over=true;clearInterval(timerI)}
+  startOnline(mref.id,'p2',(await mref.get()).data())}catch(e){toast('⚠️ '+(e.code||e.message))}}
 
 /* ============ Link iPhone (Tetapan) ============ */
 // Tukar kepada short link Tuan (cth https://s.id/ProSudoku) — mesti redirect ke GitHub Pages
@@ -688,7 +760,7 @@ function exitApp(){try{const A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Pl
 function askExit(){$('cIcon').textContent='👋';$('cTitle').textContent=t('exitApp');$('cSub').textContent=t('exitSub');$('cYes').onclick=()=>{closeM('mConfirm');if(G&&G.mode==='solo'&&!G.over)saveSolo();exitApp()};openM('mConfirm')}
 function handleBack(){
  const m=document.querySelector('.modal.on');
- if(m){if(m.id==='mWait')cancelWait();else if(m.id==='mEnd'){closeM('mEnd');show('sHome')}else if(m.id==='mName'&&!ME.name)askExit();else closeM(m.id);return}
+ if(m){if(m.id==='mWait')cancelWait();else if(m.id==='mOnline')closeOnline();else if(m.id==='mInvite')replyInvite(false);else if(m.id==='mEnd'){closeM('mEnd');show('sHome')}else if(m.id==='mName'&&!ME.name)askExit();else closeM(m.id);return}
  const scr=document.querySelector('.screen.on').id;
  if(scr==='sGame'){leaveGame();return}
  if(scr!=='sHome'){show('sHome');return}
