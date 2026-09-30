@@ -53,6 +53,7 @@ button{font-family:inherit;color:inherit;border:none;background:none;cursor:poin
 .iconbtn:active{transform:scale(.92)}
 .spacer{width:44px;height:44px}
 .homeTop{display:flex;justify-content:flex-end}
+.editPen{font-size:16px;opacity:.8;margin-left:-4px}
 .onCnt{margin-left:4px;padding:3px 9px;border-radius:99px;background:rgba(5,46,22,.35);font-size:12px;font-weight:800;display:none}
 .onCnt.on{display:inline-block}
 .olHead{display:flex;align-items:center;gap:4px;font-weight:700;font-size:14px;margin:-4px 0 8px;justify-content:center}
@@ -79,7 +80,10 @@ button{font-family:inherit;color:inherit;border:none;background:none;cursor:poin
 .qrWrap small{display:block;color:var(--mut);font-size:11px;margin-top:6px}
 .steps{padding-left:22px;color:var(--mut);font-size:13px;line-height:1.7;font-weight:500}
 .upd{display:none;align-items:center;gap:10px;padding:12px 14px;margin-bottom:10px;border-radius:16px;background:linear-gradient(135deg,rgba(52,211,153,.2),rgba(34,211,238,.2));border:1px solid rgba(52,211,153,.5);font-weight:700;font-size:14px;cursor:pointer}
-.upd.on{display:flex;animation:fadeIn .4s}
+.upd.on{display:flex;animation:updBlink 1.4s ease-in-out infinite}
+@keyframes updBlink{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.0);border-color:rgba(52,211,153,.5);transform:scale(1)}50%{box-shadow:0 0 22px 4px rgba(52,211,153,.55);border-color:#34d399;transform:scale(1.02)}}
+.upd b{animation:updBtn 1.4s ease-in-out infinite}
+@keyframes updBtn{50%{background:#fbbf24}}
 .upd b{margin-left:auto;padding:6px 12px;border-radius:10px;background:var(--ok);color:#052e16;font-size:13px}
 .backbar{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;padding:13px;border-radius:16px;background:var(--glass2);border:1px solid var(--line);font-weight:700;font-size:15px;flex:none}
 .backbar:active{transform:scale(.97);background:var(--grad)}
@@ -232,7 +236,7 @@ input.inp:focus{border-color:var(--c2)}
     <div class="profile glass" onclick="askName()">
       <div class="avatar" id="hAv">?</div>
       <div><div class="nm" id="hName">Pemain</div><div class="st" id="hStat">—</div></div>
-      <div class="chip" id="hRating">⭐ 1000</div>
+      <div class="chip" id="hRating">⭐ 1000</div><span class="editPen">✏️</span>
     </div>
     <div class="upd" id="updBar" onclick="openUpdate()">🚀 <span id="updTxt"></span><b data-t="updNow">Kemas Kini</b></div>
     <div class="menu">
@@ -356,6 +360,7 @@ input.inp:focus{border-color:var(--c2)}
   <h2 data-t="hello">Selamat datang!</h2><p data-t="nameSub">Masukkan nama untuk ranking & lawan online</p>
   <input class="inp" id="nameInp" maxlength="14" placeholder="Nama anda" readonly inputmode="none">
   <div class="kb" id="kbName"></div>
+  <button class="btn" id="nameCancel" style="margin-top:10px" onclick="closeM('mName')" data-t="cancel">Batal</button>
   
 </div></div>
 
@@ -425,9 +430,9 @@ const firebaseConfig = {
 /* ============ i18n ============ */
 const T={
  ms:{solo:'Main Solo',online:'Lawan Online 1v1',rank:'Ranking',set:'Tetapan',resume:'Sambung Permainan',time:'Masa',mist:'Silap',score:'Markah',paused:'Dijeda',undo:'Undur',erase:'Padam',notes:'Nota',hint:'Petunjuk',points:'Mata',wins:'Menang',name:'Nama pemain',lang:'Bahasa',sound:'Bunyi',vib:'Getaran',hl:'Serlah nombor sama',mystats:'Statistik saya',cancel:'Batal',onlineSub:'Puzzle sama untuk kedua-dua pemain. Siapa siap dulu, menang!',quick:'Cari Lawan Rawak',mkroom:'Buat Bilik (Kawan)',joinroom:'Masuk Bilik Guna Kod',bot:'Lawan Bot',hello:'Selamat datang!',nameSub:'Masukkan nama untuk ranking & lawan online',save:'Simpan',codeSub:'Minta kod 5 huruf daripada kawan anda',join:'Masuk',again:'Main Lagi',home:'Menu Utama',no:'Tidak',yes:'Ya',
-  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',whoOnline:'Pemain online',invite:'Ajak',busy:'Sedang main',noOnline:'Tiada pemain lain online sekarang. Cuba Cari Lawan Rawak atau Buat Bilik.',invTitle:'Ajakan Lawan!',invSub:'{n} (⭐{r}) ajak anda main 1v1 tahap {d}.',accept:'Terima',decline:'Tolak',invWait:'Menunggu {n} terima…',invWaitSub:'Ajakan tamat dalam 30 saat',invDeclined:'{n} menolak ajakan',invExpired:'Tiada jawapan daripada {n}',invGone:'Ajakan sudah tamat',pwHint:'Huruf kecil & nombor sahaja',rulesOld:'Firestore Rules belum dikemas kini (Publish rules baru)',iosTitle:'Pasang di iPhone / iPad',copyLink:'Salin Link',shareLink:'Kongsi',qrSub:'Imbas dengan kamera iPhone',ios1:'Buka link dalam Safari (bukan Chrome)',ios2:'Tekan butang Share ⬆️ di bawah skrin',ios3:'Pilih "Add to Home Screen" → Add',ios4:'Buka ProSudoku dari ikon di skrin utama',copied:'Link disalin ✓ Tampal dalam Safari',shareTxt:'Jom main ProSudoku! Buka dalam Safari:',resetTitle:'Padam Ranking',resetSub:'Semua ranking, rating & mata pemain akan direset. Masukkan password admin.',resetBtn:'Padam',resetOk:'Ranking berjaya dipadam ✓',resetBad:'Password salah',version:'Versi',checkUpd:'Semak Kemas Kini',updNow:'Kemas Kini',later:'Nanti',updTitle:'Versi baru tersedia!',updSub:'Versi {v} sedia untuk dimuat turun. Semua data, markah & ranking anda kekal selamat.',updBar:'Versi baru {v} tersedia',updLatest:'Anda guna versi terkini ✓',updFail:'Tak dapat semak kemas kini',updDl:'Memuat turun… buka fail APK untuk pasang',emptyCells:'petak kosong',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
+  pickDiff:'Pilih Tahap',diffSub:'Semakin sukar, semakin tinggi markah',easy:'Mudah',med:'Sederhana',hard:'Sukar',exp:'Pakar',searching:'Mencari lawan…',wait:'Sila tunggu sebentar',noOpp:'Tiada lawan lagi. Cuba lawan bot?',roomMade:'Bilik dibuat! Kongsi kod ini:',waitFriend:'Menunggu kawan masuk…',win:'Anda Menang!',lose:'Anda Kalah',solved:'Tahniah! Puzzle selesai',over:'Permainan Tamat',overSub:'3 kesilapan. Cuba lagi!',oppWon:'Lawan siap dahulu.',youWon:'Anda siap dahulu!',oppOut:'Lawan tinggalkan permainan.',tooMany:'Anda buat 3 kesilapan.',oppMist:'Lawan buat 3 kesilapan!',leave:'Keluar permainan?',leaveSub:'Kemajuan solo akan disimpan.',leaveOn:'Anda akan dikira kalah.',games:'Main',solvedN:'Selesai',rating:'Rating',best:'Terbaik',noNet:'firebaseConfig belum ditampal dalam index.html. Hanya solo tersedia.',noSdk:'Gagal sambung ke Firebase. Semak internet & cuba lagi.',noAuth:'Gagal log masuk Firebase. Pastikan Anonymous sign-in di-enable.',offline:'Tiada sambungan internet',emptyRank:'Belum ada pemain dalam ranking.\nJadilah yang pertama! 🏆',badCode:'Kod bilik tidak dijumpai',noHint:'Petunjuk dah habis',saved:'Disimpan',online1:'Online',you:'Anda',oppFound:'Lawan dijumpai!',back:'Kembali',chgName:'Tukar Nama',chgNameSub:'Nama baru akan dikemas kini dalam ranking',whoOnline:'Pemain online',invite:'Ajak',busy:'Sedang main',noOnline:'Tiada pemain lain online sekarang. Cuba Cari Lawan Rawak atau Buat Bilik.',invTitle:'Ajakan Lawan!',invSub:'{n} (⭐{r}) ajak anda main 1v1 tahap {d}.',accept:'Terima',decline:'Tolak',invWait:'Menunggu {n} terima…',invWaitSub:'Ajakan tamat dalam 30 saat',invDeclined:'{n} menolak ajakan',invExpired:'Tiada jawapan daripada {n}',invGone:'Ajakan sudah tamat',pwHint:'Huruf kecil & nombor sahaja',rulesOld:'Firestore Rules belum dikemas kini (Publish rules baru)',iosTitle:'Pasang di iPhone / iPad',copyLink:'Salin Link',shareLink:'Kongsi',qrSub:'Imbas dengan kamera iPhone',ios1:'Buka link dalam Safari (bukan Chrome)',ios2:'Tekan butang Share ⬆️ di bawah skrin',ios3:'Pilih "Add to Home Screen" → Add',ios4:'Buka ProSudoku dari ikon di skrin utama',copied:'Link disalin ✓ Tampal dalam Safari',shareTxt:'Jom main ProSudoku! Buka dalam Safari:',resetTitle:'Padam Ranking',resetSub:'Semua ranking, rating & mata pemain akan direset. Masukkan password admin.',resetBtn:'Padam',resetOk:'Ranking berjaya dipadam ✓',resetBad:'Password salah',version:'Versi',checkUpd:'Semak Kemas Kini',updNow:'Kemas Kini',later:'Nanti',updTitle:'Versi baru tersedia!',updSub:'Versi {v} sudah ada. Tekan Kemas Kini — app akan dimuat semula dalam beberapa saat. Semua data, markah & ranking kekal selamat.',updBar:'Versi baru {v} tersedia',updLatest:'Anda guna versi terkini ✓',updFail:'Tak dapat semak kemas kini',updDl:'Mengemas kini…',emptyCells:'petak kosong',exitBtn:'Keluar App',exitApp:'Keluar ProSudoku?',exitSub:'Jumpa lagi! Teruskan asah minda anda.'},
  en:{solo:'Play Solo',online:'Online 1v1 Battle',rank:'Ranking',set:'Settings',resume:'Resume Game',time:'Time',mist:'Mistakes',score:'Score',paused:'Paused',undo:'Undo',erase:'Erase',notes:'Notes',hint:'Hint',points:'Points',wins:'Wins',name:'Player name',lang:'Language',sound:'Sound',vib:'Vibration',hl:'Highlight same numbers',mystats:'My stats',cancel:'Cancel',onlineSub:'Same puzzle for both players. First to finish wins!',quick:'Find Random Opponent',mkroom:'Create Room (Friend)',joinroom:'Join Room with Code',bot:'Play vs Bot',hello:'Welcome!',nameSub:'Enter a name for ranking & online play',save:'Save',codeSub:'Ask your friend for the 5-letter code',join:'Join',again:'Play Again',home:'Main Menu',no:'No',yes:'Yes',
-  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',whoOnline:'Players online',invite:'Invite',busy:'In a game',noOnline:'No other players online right now. Try Find Random Opponent or Create Room.',invTitle:'Battle Invite!',invSub:'{n} (⭐{r}) invites you to a 1v1 on {d}.',accept:'Accept',decline:'Decline',invWait:'Waiting for {n} to accept…',invWaitSub:'Invite expires in 30 seconds',invDeclined:'{n} declined your invite',invExpired:'No response from {n}',invGone:'Invite has expired',pwHint:'Lowercase letters & numbers only',rulesOld:'Firestore Rules not updated (publish the new rules)',iosTitle:'Install on iPhone / iPad',copyLink:'Copy Link',shareLink:'Share',qrSub:'Scan with iPhone camera',ios1:'Open the link in Safari (not Chrome)',ios2:'Tap the Share button ⬆️ at the bottom',ios3:'Choose "Add to Home Screen" → Add',ios4:'Open ProSudoku from the home screen icon',copied:'Link copied ✓ Paste it in Safari',shareTxt:'Play ProSudoku! Open in Safari:',resetTitle:'Delete Ranking',resetSub:'All rankings, ratings & points will be reset. Enter the admin password.',resetBtn:'Delete',resetOk:'Ranking deleted ✓',resetBad:'Wrong password',version:'Version',checkUpd:'Check for Update',updNow:'Update',later:'Later',updTitle:'New version available!',updSub:'Version {v} is ready to download. All your data, scores & ranking stay safe.',updBar:'New version {v} available',updLatest:'You are on the latest version ✓',updFail:'Could not check for updates',updDl:'Downloading… open the APK file to install',emptyCells:'empty cells',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
+  pickDiff:'Choose Level',diffSub:'Harder levels give more points',easy:'Easy',med:'Medium',hard:'Hard',exp:'Expert',searching:'Finding opponent…',wait:'Please wait',noOpp:'No opponents yet. Try the bot?',roomMade:'Room created! Share this code:',waitFriend:'Waiting for your friend…',win:'You Win!',lose:'You Lose',solved:'Puzzle solved!',over:'Game Over',overSub:'3 mistakes. Try again!',oppWon:'Opponent finished first.',youWon:'You finished first!',oppOut:'Opponent left the game.',tooMany:'You made 3 mistakes.',oppMist:'Opponent made 3 mistakes!',leave:'Leave game?',leaveSub:'Solo progress will be saved.',leaveOn:'This counts as a loss.',games:'Games',solvedN:'Solved',rating:'Rating',best:'Best',noNet:'firebaseConfig not pasted into index.html. Solo only.',noSdk:'Cannot reach Firebase. Check internet & retry.',noAuth:'Firebase sign-in failed. Enable Anonymous sign-in.',offline:'No internet connection',emptyRank:'No players ranked yet.\nBe the first! 🏆',badCode:'Room code not found',noHint:'No hints left',saved:'Saved',online1:'Online',you:'You',oppFound:'Opponent found!',back:'Back',chgName:'Change Name',chgNameSub:'Your new name will be updated in the ranking',whoOnline:'Players online',invite:'Invite',busy:'In a game',noOnline:'No other players online right now. Try Find Random Opponent or Create Room.',invTitle:'Battle Invite!',invSub:'{n} (⭐{r}) invites you to a 1v1 on {d}.',accept:'Accept',decline:'Decline',invWait:'Waiting for {n} to accept…',invWaitSub:'Invite expires in 30 seconds',invDeclined:'{n} declined your invite',invExpired:'No response from {n}',invGone:'Invite has expired',pwHint:'Lowercase letters & numbers only',rulesOld:'Firestore Rules not updated (publish the new rules)',iosTitle:'Install on iPhone / iPad',copyLink:'Copy Link',shareLink:'Share',qrSub:'Scan with iPhone camera',ios1:'Open the link in Safari (not Chrome)',ios2:'Tap the Share button ⬆️ at the bottom',ios3:'Choose "Add to Home Screen" → Add',ios4:'Open ProSudoku from the home screen icon',copied:'Link copied ✓ Paste it in Safari',shareTxt:'Play ProSudoku! Open in Safari:',resetTitle:'Delete Ranking',resetSub:'All rankings, ratings & points will be reset. Enter the admin password.',resetBtn:'Delete',resetOk:'Ranking deleted ✓',resetBad:'Wrong password',version:'Version',checkUpd:'Check for Update',updNow:'Update',later:'Later',updTitle:'New version available!',updSub:'Version {v} is available. Tap Update — the app reloads in a few seconds. All your data, scores & ranking stay safe.',updBar:'New version {v} available',updLatest:'You are on the latest version ✓',updFail:'Could not check for updates',updDl:'Updating…',emptyCells:'empty cells',exitBtn:'Exit App',exitApp:'Exit ProSudoku?',exitSub:'See you again! Keep training your brain.'}
 };
 const $=id=>document.getElementById(id);
 const LS={get(k,d){try{const v=localStorage.getItem('psd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('psd_'+k,JSON.stringify(v))}catch(e){}}};
@@ -453,8 +458,8 @@ const fmt=s=>{s=Math.floor(s);const m=Math.floor(s/60);return String(m).padStart
 function refreshHome(){$('hName').textContent=ME.name||'Pemain';$('hAv').textContent=(ME.name||'?')[0].toUpperCase();$('hAv').style.background=avColor(ME.name);
  $('hStat').textContent=`${ME.solved} ${t('solvedN').toLowerCase()} · ${ME.wins}W ${ME.losses}L · ${ME.points} ${t('points').toLowerCase()}`;$('hRating').textContent='⭐ '+ME.rating;
  $('btnResume').style.display=LS.get('save',null)?'flex':'none'}
-function askName(){$('nameInp').value=ME.name||'';openM('mName')}
-function saveName(){const n=$('nameInp').value.trim().replace(/\s+/g,' ').slice(0,14);if(!n){toast('✏️');return}ME.name=n;LS.set('me',ME);closeM('mName');refreshHome();refreshSet();pushProfile();toast(t('saved')+' ✓')}
+function askName(){$('nameInp').value=ME.name||'';const h=document.querySelector('#mName h2'),p=document.querySelector('#mName p');if(ME.name){h.textContent=t('chgName');p.textContent=t('chgNameSub')}else{h.textContent=t('hello');p.textContent=t('nameSub')}$('nameCancel').style.display=ME.name?'flex':'none';openM('mName')}
+function saveName(){const n=$('nameInp').value.trim().replace(/\s+/g,' ').slice(0,14);if(!n){toast('✏️');return}ME.name=n;LS.set('me',ME);closeM('mName');refreshHome();refreshSet();pushProfile();if(typeof beat==='function')beat();toast(t('saved')+' ✓')}
 
 /* ============ Sound & haptics ============ */
 let AC;function beep(f=600,d=.08,type='sine',v=.08){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
@@ -507,9 +512,9 @@ function startGame(){show('sGame');buildBoard();buildPad();$('gTitle').textConte
  clearInterval(timerI);timerI=setInterval(tick,1000);render();
  if(G.mode==='bot')startBot()}
 function tick(){if(!G||G.paused||G.over)return;G.time++;$('gTime').textContent=fmt(G.time);if(G.mode==='solo'&&G.time%5===0)saveSolo()}
-function saveSolo(){if(G&&G.mode==='solo'&&!G.over)LS.set('save',{diff:G.diff,seed:G.seed,board:G.board,notes:G.notes,mist:G.mist,hints:G.hints,time:G.time,score:G.score});}
+function saveSolo(){if(G&&G.mode==='solo'&&!G.over)LS.set('save',{diff:G.diff,seed:G.seed,board:G.board,notes:G.notes,mist:G.mist,hints:G.hints,time:G.time,score:G.score,scored:G.scored||{},units:G.units||{}});}
 function resumeSaved(){const s=LS.get('save',null);if(!s)return;const {puzzle,solution}=makePuzzle(s.seed,s.diff);
- G={diff:s.diff,seed:s.seed,mode:'solo',puzzle,solution,board:s.board,notes:s.notes,sel:-1,mist:s.mist,hints:s.hints,time:s.time,hist:[],noteMode:false,paused:false,over:false,score:s.score||0,combo:0};startGame()}
+ G={diff:s.diff,seed:s.seed,mode:'solo',puzzle,solution,board:s.board,notes:s.notes,sel:-1,mist:s.mist,hints:s.hints,time:s.time,hist:[],noteMode:false,paused:false,over:false,score:s.score||0,combo:0,scored:s.scored||{},units:s.units||{}};startGame()}
 
 function buildBoard(){const b=$('board');b.querySelectorAll('.cell').forEach(c=>c.remove());const ov=$('pauseOv');
  for(let i=0;i<81;i++){const c=document.createElement('div');c.className='cell';c.dataset.i=i;c.onclick=()=>{select(i)};b.insertBefore(c,ov)}}
@@ -526,23 +531,24 @@ function render(){if(!G)return;const cells=$('board').querySelectorAll('.cell');
 function select(i){if(!G||G.over||G.paused)return;G.sel=i;sfx.tap();render()}
 function fxCell(i,cls){const c=$('board').children[i];if(c)c.dataset.fx=cls}
 function input(n){if(!G||G.over||G.paused||G.sel<0)return;const i=G.sel;if(G.puzzle[i])return;
- if(G.board[i]===G.solution[i])return;
- if(G.noteMode){G.hist.push({i,v:G.board[i],n:G.notes[i]});G.notes[i]^=(1<<n);G.board[i]=0;sfx.tap();render();return}
+ if(G.board[i]===n&&!G.noteMode)return;
+ if(G.noteMode){if(G.board[i])return;G.hist.push({i,v:G.board[i],n:G.notes[i]});G.notes[i]^=(1<<n);sfx.tap();render();return}
+ G.scored=G.scored||{};G.units=G.units||{};
  G.hist.push({i,v:G.board[i],n:G.notes[i]});G.board[i]=n;G.notes[i]=0;
- if(n===G.solution[i]){G.combo++;const pts=Math.round(DIFF[G.diff].base/10*(1+Math.min(G.combo,10)*.1));G.score+=pts;
+ if(n===G.solution[i]){G.combo++;if(!G.scored[i]){G.scored[i]=1;G.score+=Math.round(DIFF[G.diff].base/10*(1+Math.min(G.combo,10)*.1))}
   // clear notes of peers
   for(let k=0;k<81;k++)if(((k/9)|0)===((i/9)|0)||k%9===i%9||BOX(k)===BOX(i))G.notes[k]&=~(1<<n);
   fxCell(i,'pop');sfx.ok();vib(15);checkUnits(i);sendProgress()}
- else{G.combo=0;G.mist++;G.score=Math.max(0,G.score-DIFF[G.diff].base/5|0);sfx.bad();vib([60,40,60]);sendMistake()}
+ else{G.combo=0;G.mist++;G.score=Math.max(0,G.score-DIFF[G.diff].base/5|0);sfx.bad();vib([60,40,60]);sendMistake();sendProgress()}
  render();
  if(isSolved())setTimeout(()=>G.mode==='solo'?endSolo(true):endOnline('solved'),350)}
 function checkUnits(i){const r=(i/9)|0,c=i%9,b=BOX(i);const units=[[...Array(9)].map((_,k)=>r*9+k),[...Array(9)].map((_,k)=>k*9+c),[...Array(81).keys()].filter(k=>BOX(k)===b)];let any=false;
- for(const u of units)if(u.every(k=>G.board[k]===G.solution[k])){any=true;u.forEach((k,idx)=>setTimeout(()=>{const el=$('board').children[k];el.classList.remove('wave');void el.offsetWidth;el.classList.add('wave')},idx*35));G.score+=DIFF[G.diff].base/4|0}
+ for(const u of units)if(u.every(k=>G.board[k]===G.solution[k])){any=true;u.forEach((k,idx)=>setTimeout(()=>{const el=$('board').children[k];el.classList.remove('wave');void el.offsetWidth;el.classList.add('wave')},idx*35));G.units=G.units||{};const uk=u.join(',');if(!G.units[uk]){G.units[uk]=1;G.score+=DIFF[G.diff].base/4|0}}
  if(any)setTimeout(sfx.unit,120)}
 function isSolved(){for(let i=0;i<81;i++)if(G.board[i]!==G.solution[i])return false;return true}
 function correctCount(){let n=0,e=0;for(let i=0;i<81;i++){if(!G.puzzle[i]){e++;if(G.board[i]===G.solution[i])n++}}return e?n/e:1}
-function undo(){if(!G||G.over||!G.hist.length)return;const h=G.hist.pop();if(G.board[h.i]&&G.board[h.i]===G.solution[h.i]&&G.mode!=='solo')return G.hist.push(h);G.board[h.i]=h.v;G.notes[h.i]=h.n;G.sel=h.i;sfx.tap();render()}
-function erase(){if(!G||G.over||G.sel<0)return;const i=G.sel;if(G.puzzle[i]||G.board[i]===G.solution[i])return;G.hist.push({i,v:G.board[i],n:G.notes[i]});G.board[i]=0;G.notes[i]=0;sfx.tap();render()}
+function undo(){if(!G||G.over||!G.hist.length)return;const h=G.hist.pop();G.board[h.i]=h.v;G.notes[h.i]=h.n;G.sel=h.i;sfx.tap();sendProgress();render()}
+function erase(){if(!G||G.over||G.paused||G.sel<0)return;const i=G.sel;if(G.puzzle[i])return;if(!G.board[i]&&!G.notes[i])return;G.hist.push({i,v:G.board[i],n:G.notes[i]});G.board[i]=0;G.notes[i]=0;sfx.tap();vib(10);sendProgress();render()}
 function toggleNotes(){if(!G)return;G.noteMode=!G.noteMode;$('noteBtn').classList.toggle('act',G.noteMode);sfx.tap()}
 function hint(){if(!G||G.over)return;if(G.hints<=0)return toast(t('noHint'));let i=G.sel;
  if(i<0||G.puzzle[i]||G.board[i]===G.solution[i]){const e=[];for(let k=0;k<81;k++)if(G.board[k]!==G.solution[k])e.push(k);if(!e.length)return;i=e[Math.floor(Math.random()*e.length)]}
@@ -671,7 +677,7 @@ function watchOnline(on){if(olUnsub){olUnsub();olUnsub=null}clearInterval(olTick
  $('olList').innerHTML='<div class="olEmpty">…</div>';
  olUnsub=db.collection('presence').where('ts','>',Date.now()-ONLINE_MS).onSnapshot(q=>{olRows=q.docs.map(d=>({id:d.id,...d.data()}));renderOnline()},e=>{$('olList').innerHTML='<div class="olEmpty">⚠️ '+esc(e.code||e.message)+'</div>'});
  olTick=setInterval(renderOnline,10000)}
-function renderOnline(){const now=Date.now();const rows=olRows.filter(r=>r.id!==ME.fid&&r.name&&now-(r.ts||0)<ONLINE_MS).sort((a,b)=>(a.status==='playing')-(b.status==='playing')||(b.rating||0)-(a.rating||0));
+function renderOnline(){const now=Date.now();const seenN=new Set();const rows=olRows.filter(r=>r.id!==ME.fid&&r.name&&now-(r.ts||0)<ONLINE_MS).sort((a,b)=>(b.ts||0)-(a.ts||0)).filter(r=>{const k=r.name.trim().toLowerCase();if(seenN.has(k))return false;seenN.add(k);return true}).sort((a,b)=>(a.status==='playing')-(b.status==='playing')||(b.rating||0)-(a.rating||0));
  $('olN').textContent=rows.length;const e=$('onCnt');e.textContent='🟢 '+rows.length;e.classList.toggle('on',rows.length>0);
  $('olList').innerHTML=rows.length?rows.map(r=>{const busy=r.status==='playing';return `<div class="olRow${busy?' busy':''}"><div class="av" style="background:${avColor(r.name)}">${esc(r.name[0].toUpperCase())}</div><div class="nm">${esc(r.name)}<small>⭐ ${r.rating||1000}</small></div><button ${busy?'disabled':''} onclick="askInvite('${r.id}')">${busy?t('busy'):'⚔️ '+t('invite')}</button></div>`}).join(''):`<div class="olEmpty">${t('noOnline')}</div>`}
 let invTarget=null;
@@ -740,7 +746,7 @@ function rankTab(b){document.querySelectorAll('.tab').forEach(x=>x.classList.tog
 async function loadRank(){const L=$('rankList'),P=$('podium');P.innerHTML='';
  if(!CFG_OK){L.innerHTML=`<div class="empty">${t('noNet')}</div>`;return}if(!db){L.innerHTML=`<div class="empty">${t('noSdk')}</div>`;initFB();return}
  L.innerHTML='<div class="spinner" style="width:50px;height:50px"></div>';
- try{const q=await db.collection('players').orderBy(rankKey,'desc').limit(300).get();const rows=q.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.name&&(parseInt(r.season)||1)===SEASON).slice(0,50);
+ try{const q=await db.collection('players').orderBy(rankKey,'desc').limit(300).get();const seen=new Set();const rows=q.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.name&&(parseInt(r.season)||1)===SEASON).filter(r=>!(ME.name&&r.id!==ME.fid&&r.name.trim().toLowerCase()===ME.name.trim().toLowerCase())).filter(r=>{const k=r.name.trim().toLowerCase();if(seen.has(k))return false;seen.add(k);return true}).slice(0,50);
   if(!rows.length){L.innerHTML=`<div class="empty">${t('emptyRank').replace('\n','<br>')}</div>`;return}
   const sfxk=rankKey==='rating'?'⭐':rankKey==='points'?'pts':'W';
   const top=rows.slice(0,3);const ord=[top[1],top[0],top[2]];const cls=['p2','p1','p3'];const med=['2','1','3'];
@@ -769,24 +775,31 @@ function handleBack(){
  document.addEventListener('backbutton',e=>{e.preventDefault();handleBack()},false);
  if(!native){try{history.pushState({ps:1},'');addEventListener('popstate',()=>{history.pushState({ps:1},'');handleBack()})}catch(e){}}})();
 
-/* ============ Auto update (GitHub Releases) ============ */
-const APP_BUILD=parseInt('__APP_BUILD__')||0;           // diisi automatik oleh GitHub Actions
-const UPDATE_REPO='alemmaxx/ProSudoku';                  // repo GitHub app ini
+/* ============ Kemas kini dalam app (tanpa download APK) ============ */
+// PENTING: naikkan nombor ini setiap kali index.html dikemas kini di GitHub
+const APP_VERSION='1.2.0';
 let updInfo=null;
-function verLabel(n){return '1.0.'+n}
+function verLabel(v){return v}
+function canCheck(){return location.protocol==='https:'&&location.hostname!=='localhost'}
+function vNum(v){return String(v).split('.').map(x=>parseInt(x)||0).reduce((a,x)=>a*1000+x,0)}
 async function checkUpdate(manual){
- if(!APP_BUILD){if(manual)toast(t('updLatest'));return}
- try{const r=await fetch(`https://api.github.com/repos/${UPDATE_REPO}/releases/latest`,{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();
-  const n=parseInt(String(j.tag_name||'').split('.').pop())||0;const a=(j.assets||[]).find(x=>/\.apk$/i.test(x.name));
-  if(n>APP_BUILD&&a){updInfo={n,url:a.browser_download_url};$('updTxt').textContent=t('updBar').replace('{v}',verLabel(n));$('updBar').classList.add('on');
-   const skip=LS.get('updSkip',0);if(manual||skip!==n)openUpdate()}
+ if(!canCheck()){if(manual)toast(t('updLatest'));return}
+ try{const u=new URL('index.html',location.href);u.searchParams.set('chk',Date.now());
+  const r=await fetch(u.toString(),{cache:'no-store'});if(!r.ok)throw 0;const html=await r.text();
+  const m=html.match(/APP_VERSION\s*=\s*'([^']+)'/);const nv=m&&m[1];
+  if(nv&&vNum(nv)>vNum(APP_VERSION)){updInfo={v:nv};$('updTxt').textContent=t('updBar').replace('{v}',nv);$('updBar').classList.add('on');
+   if(manual||LS.get('updSkip','')!==nv)openUpdate()}
   else{$('updBar').classList.remove('on');if(manual)toast(t('updLatest'))}
  }catch(e){if(manual)toast(t('updFail'))}}
-function openUpdate(){if(!updInfo)return;$('updSub').textContent=t('updSub').replace('{v}',verLabel(updInfo.n));$('mUpd').querySelector('[data-t="later"]').onclick=()=>{LS.set('updSkip',updInfo.n);closeM('mUpd')};openM('mUpd')}
-function doUpdate(){if(!updInfo)return;if(G&&G.mode==='solo'&&!G.over)saveSolo();LS.set('me',ME);closeM('mUpd');toast(t('updDl'));
- setTimeout(()=>{try{const isNative=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform();if(isNative)location.href=updInfo.url;else window.open(updInfo.url,'_blank')}catch(e){location.href=updInfo.url}},400)}
-document.querySelectorAll('.verTxt').forEach(e=>e.textContent=APP_BUILD?verLabel(APP_BUILD):'1.0 (dev)');
-setTimeout(()=>checkUpdate(false),2500);
+function openUpdate(){if(!updInfo)return;$('updSub').textContent=t('updSub').replace('{v}',updInfo.v);$('mUpd').querySelector('[data-t="later"]').onclick=()=>{LS.set('updSkip',updInfo.v);closeM('mUpd')};openM('mUpd')}
+async function doUpdate(){if(!updInfo)return;if(G&&G.mode==='solo'&&!G.over)saveSolo();LS.set('me',ME);LS.set('settings',S);closeM('mUpd');toast('🚀 '+t('updDl'));
+ try{const regs=navigator.serviceWorker?await navigator.serviceWorker.getRegistrations():[];for(const r of regs)await r.update().catch(()=>{})}catch(e){}
+ try{if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch(e){}
+ setTimeout(()=>{const u=new URL('./',location.href);u.search='?v='+encodeURIComponent(updInfo.v);location.replace(u.toString())},500)}
+document.querySelectorAll('.verTxt').forEach(e=>e.textContent=APP_VERSION);
+setTimeout(()=>checkUpdate(false),3000);
+setInterval(()=>{if(!document.hidden)checkUpdate(false)},300000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(()=>checkUpdate(false),1500)});
 
 /* ============ Boot ============ */
 applyLang();refreshHome();refreshSet();initFB();

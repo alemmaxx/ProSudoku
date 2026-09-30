@@ -1,5 +1,5 @@
 // ProSudoku service worker — offline + auto update
-const CACHE = 'prosudoku-v1';
+const CACHE = 'prosudoku-v2';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -12,6 +12,8 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+  // Semakan versi (?chk=): terus ke internet, jangan simpan
+  if (url.searchParams.has('chk')) return;
   // Firebase data / API: sentiasa terus ke internet
   if (/firestore|googleapis|identitytoolkit|securetoken|api\.github/.test(url.hostname)) return;
   // Halaman app: network-first (dapat versi terbaru), fallback cache bila offline
